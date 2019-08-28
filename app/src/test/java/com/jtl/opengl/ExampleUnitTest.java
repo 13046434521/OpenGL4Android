@@ -1,4 +1,4 @@
-package com.jtl.openg;
+package com.jtl.opengl;
 
 import org.junit.Test;
 

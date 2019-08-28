@@ -1,4 +1,4 @@
-package com.jtl.openg.helper;
+package com.jtl.opengl.helper;
 
 import android.content.Context;
 import android.content.res.Resources;

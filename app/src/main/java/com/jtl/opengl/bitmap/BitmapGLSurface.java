@@ -1,9 +1,9 @@
-package com.jtl.openg.bitmap;
+package com.jtl.opengl.bitmap;
 
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.jtl.openg.base.BaseGLSurface;
+import com.jtl.opengl.base.BaseGLSurface;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

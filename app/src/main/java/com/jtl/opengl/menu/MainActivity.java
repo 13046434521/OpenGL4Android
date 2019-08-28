@@ -1,22 +1,18 @@
-package com.jtl.openg.menu;
+package com.jtl.opengl.menu;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jtl.openg.R;
-import com.jtl.openg.bitmap.BitmapActivity;
-import com.jtl.openg.polygon.PolygonActivity;
-import com.jtl.openg.texture.TextureActivity;
-import com.socks.library.KLog;
+import com.jtl.opengl.R;
+import com.jtl.opengl.bitmap.BitmapActivity;
+import com.jtl.opengl.polygon.PolygonActivity;
+import com.jtl.opengl.texture.TextureActivity;
 
 import java.util.ArrayList;
 import java.util.List;

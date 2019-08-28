@@ -1,4 +1,4 @@
-package com.jtl.openg.bitmap;
+package com.jtl.opengl.bitmap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import com.jtl.openg.ShaderHelper;
-import com.jtl.openg.base.BaseRender;
+import com.jtl.opengl.ShaderHelper;
+import com.jtl.opengl.base.BaseRender;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

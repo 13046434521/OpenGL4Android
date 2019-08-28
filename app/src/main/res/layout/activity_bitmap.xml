@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".bitmap.BitmapActivity">
-    <com.jtl.openg.bitmap.BitmapGLSurface
+    <com.jtl.opengl.bitmap.BitmapGLSurface
         android:id="@+id/gl_bitmap_surface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

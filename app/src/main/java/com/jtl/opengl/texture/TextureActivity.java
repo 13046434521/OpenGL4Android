@@ -1,10 +1,10 @@
-package com.jtl.openg.texture;
+package com.jtl.opengl.texture;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.jtl.openg.R;
+import com.jtl.opengl.R;
 
 public class TextureActivity extends AppCompatActivity {
 

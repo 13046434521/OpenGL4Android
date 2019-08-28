@@ -1,4 +1,4 @@
-package com.jtl.openg.base;
+package com.jtl.opengl.base;
 
 import android.content.Context;
 import android.opengl.GLES20;

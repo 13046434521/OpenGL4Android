@@ -1,4 +1,4 @@
-package com.jtl.openg.menu;
+package com.jtl.opengl.menu;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jtl.openg.R;
+import com.jtl.opengl.R;
 import com.socks.library.KLog;
 
 import java.util.List;

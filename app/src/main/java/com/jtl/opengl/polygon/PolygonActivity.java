@@ -1,10 +1,10 @@
-package com.jtl.openg.polygon;
+package com.jtl.opengl.polygon;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.jtl.openg.R;
+import com.jtl.opengl.R;
 
 public class PolygonActivity extends AppCompatActivity {
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jtl.openg">
+    package="com.jtl.opengl">
     <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
     <application
         android:allowBackup="true"
@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".texture.TextureActivity"></activity>
-        <activity android:name=".bitmap.BitmapActivity" />
-        <activity android:name=".polygon.PolygonActivity" />
-        <activity android:name=".menu.MainActivity">
+        <activity android:name="com.jtl.opengl.texture.TextureActivity"></activity>
+        <activity android:name="com.jtl.opengl.bitmap.BitmapActivity" />
+        <activity android:name="com.jtl.opengl.polygon.PolygonActivity" />
+        <activity android:name="com.jtl.opengl.menu.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
