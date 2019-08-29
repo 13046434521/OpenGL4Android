@@ -1,4 +1,4 @@
-package com.jtl.opengl.bitmap;
+package com.jtl.opengl.polygon;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,26 +10,22 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * 作者:jtl
- * 日期:Created in 2019/8/27 15:08
- * 描述: bitmap 渲染
+ * 日期:Created in 2019/8/28 18:08
+ * 描述:
  * 更改:
  */
-public class BitmapGLSurface extends BaseGLSurface {
-    private BitmapRender mBitmapRender;
-    public BitmapGLSurface(Context context) {
+public class PolygonGLSurface extends BaseGLSurface {
+    public PolygonGLSurface(Context context) {
         super(context);
     }
 
-    public BitmapGLSurface(Context context, AttributeSet attrs) {
+    public PolygonGLSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
-
-        mBitmapRender=new BitmapRender();
-        mBitmapRender.createdGLThread(getContext());
     }
 
     @Override
@@ -40,17 +36,5 @@ public class BitmapGLSurface extends BaseGLSurface {
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
-
-        mBitmapRender.onDraw();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 }
