@@ -36,7 +36,7 @@ public class BaseGLSurface extends GLSurfaceView implements GLSurfaceView.Render
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(0,0,0,0);
+        GLES20.glClearColor(1,1,1,0);
     }
 
     @Override

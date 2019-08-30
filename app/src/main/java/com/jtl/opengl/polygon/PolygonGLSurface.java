@@ -15,6 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
  * 更改:
  */
 public class PolygonGLSurface extends BaseGLSurface {
+    private TriangleRender mTriangleRender;
     public PolygonGLSurface(Context context) {
         super(context);
     }
@@ -26,6 +27,8 @@ public class PolygonGLSurface extends BaseGLSurface {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
+        mTriangleRender=new TriangleRender();
+        mTriangleRender.createdGLThread(getContext());
     }
 
     @Override
@@ -36,5 +39,6 @@ public class PolygonGLSurface extends BaseGLSurface {
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
+        mTriangleRender.onDraw();
     }
 }

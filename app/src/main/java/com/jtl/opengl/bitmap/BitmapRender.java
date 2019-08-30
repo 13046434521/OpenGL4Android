@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 
 import com.jtl.opengl.helper.ShaderHelper;
 import com.jtl.opengl.base.BaseRender;
-import com.socks.library.KLog;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -23,11 +21,8 @@ import java.nio.FloatBuffer;
  */
 public class BitmapRender extends BaseRender {
     private static final String TAG = BitmapRender.class.getSimpleName();
-    private Context mContext;
-    //    private static final String VERTEX_SHADER_NAME = "shaders/point_circle.vert";
-//    private static final String FRAGMENT_SHADER_NAME = "shaders/point_circle.frag";
-    private static final String VERTEX_SHADER_NAME = "shaders/bitmap_vertex.glsl";
-    private static final String FRAGMENT_SHADER_NAME = "shaders/bitmap_frag.glsl";
+    private static final String VERTEX_SHADER_NAME = "shader/bitmap_vertex.glsl";
+    private static final String FRAGMENT_SHADER_NAME = "shader/bitmap_frag.glsl";
     private static final String bitmapFile = "model/nba.jpg";
     private int mProgram;
     private int[] texture = new int[1];
@@ -57,8 +52,6 @@ public class BitmapRender extends BaseRender {
 
     @Override
     protected void createdGLThread(Context context) {
-        mContext = context;
-
         initProgram(context);
         initData(context);
         initTexture();
@@ -139,13 +132,13 @@ public class BitmapRender extends BaseRender {
         GLES20.glEnableVertexAttribArray(a_Position);
         GLES20.glEnableVertexAttribArray(a_TexCoord);
 
+        //public static void glVertexAttribPointer(插槽位置,有几个分量（x,y,z,w）,数据类型,是否归一化,0,数据)
+        //告诉GPU如何遍历VBO的内存块
         GLES20.glVertexAttribPointer(a_Position, 2, GLES20.GL_FLOAT, true, 0, mVertexCoord);
         GLES20.glVertexAttribPointer(a_TexCoord, 2, GLES20.GL_FLOAT, true, 0, mTextureCoord);
-//
-//        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, mBitmap, 0);
-//        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
-//        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
 
+        //绘制图元类型，从第几个点开始绘制，绘制多少个点
+        //他会遍历，vbo里的数据。并把点分别传入4个shader里，他们的viewMatrix，projectMatrix，是一模一样的
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
         GLES20.glDisableVertexAttribArray(a_Position);
