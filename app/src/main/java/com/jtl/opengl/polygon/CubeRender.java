@@ -3,11 +3,14 @@ package com.jtl.opengl.polygon;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
 import com.jtl.opengl.base.BaseRender;
 import com.jtl.opengl.helper.ShaderHelper;
+import com.socks.library.KLog;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,6 +29,7 @@ public class CubeRender extends BaseRender {
     private static final String VERTEX_SHADER_NAME = "shader/cube_vertex.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/cube_frag.glsl";
     private static final String bitmapFilePath = "model/zhangli.jpg";
+    private Bitmap[] mBitmaps = new Bitmap[6];
     private short[] index = new short[]{
             6, 7, 4, 6, 4, 5,    //后面
             6, 3, 7, 6, 2, 3,    //右面
@@ -36,6 +40,7 @@ public class CubeRender extends BaseRender {
     };
     private int mProgram;
     private int[] texture = new int[1];
+    private int mTexture;
     private int a_Position;
     private int a_TexCoord;
     private int a_MvpMatrix;
@@ -49,7 +54,7 @@ public class CubeRender extends BaseRender {
             -1.0f, 1.0f,
             -1.0f, -1.0f,
             1.0f, 1.0f,
-            1.0f, -1.0f
+            1.0f, -1.0f,
     };
     private float[] vertexCoord = new float[]{
             -1.0f, 1.0f, 1.0f, 1.0f,    //正面左上0
@@ -70,7 +75,7 @@ public class CubeRender extends BaseRender {
     protected void createdGLThread(Context context) {
         initProgram(context);
         initData(context);
-//        initTexture();
+        initTexture(context);
     }
 
     private void initProgram(Context context) {
@@ -84,32 +89,51 @@ public class CubeRender extends BaseRender {
         GLES20.glUseProgram(mProgram);
 
         a_Position = GLES20.glGetAttribLocation(mProgram, "a_Position");
-//        a_TexCoord =GLES20.glGetAttribLocation(mProgram,"a_TexCoord");
+        a_TexCoord = GLES20.glGetAttribLocation(mProgram, "a_TexCoord");
         a_MvpMatrix = GLES20.glGetUniformLocation(mProgram, "a_MvpMatrix");
-//        u_TextureUnit =GLES20.glGetUniformLocation(mProgram,"u_TextureUnit");
+        u_TextureUnit = GLES20.glGetUniformLocation(mProgram, "u_TextureUnit");
 
-//        GLES20.glDetachShader(mProgram,vertexShader);
-//        GLES20.glDetachShader(mProgram,fragmentShader);
-//        GLES20.glDeleteShader(vertexShader);
-//        GLES20.glDeleteShader(fragmentShader);
-
+        GLES20.glDetachShader(mProgram, vertexShader);
+        GLES20.glDetachShader(mProgram, fragmentShader);
+        GLES20.glDeleteShader(vertexShader);
+        GLES20.glDeleteShader(fragmentShader);
+        KLog.i(TAG, "a_Position:" + a_Position + "  a_TexCoord:" + a_TexCoord + "  a_MvpMatrix:" + a_MvpMatrix + "  u_TextureUnit:" + u_TextureUnit + "  ");
         ShaderHelper.checkGLError("initProgram");
     }
 
-    private void initTexture() {
+    private void initTexture(Context context) {
         GLES20.glGenTextures(1, texture, 0);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, texture[0]);
         GLES20.glUniform1i(u_TextureUnit, 0);
 
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+        ShaderHelper.checkGLError("initTexture");
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, mBitmap, 0);
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
 
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+
+        ShaderHelper.checkGLError("initTexture");
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, 0);
 
         ShaderHelper.checkGLError("initTexture");
     }
@@ -134,7 +158,13 @@ public class CubeRender extends BaseRender {
         mIndexBuffer.position(0);
 
         try {
-            mBitmap = BitmapFactory.decodeStream(context.getAssets().open(bitmapFilePath));
+            for (int i = 0; i < 6; i++) {
+                Bitmap mBitmap = BitmapFactory.decodeStream(context.getAssets().open(bitmapFilePath));
+                mBitmaps[i] = mBitmap;
+            }
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+            mBitmap = BitmapFactory.decodeStream(context.getAssets().open(bitmapFilePath), new Rect(), options);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,26 +195,21 @@ public class CubeRender extends BaseRender {
     protected void onDraw() {
         GLES20.glUseProgram(mProgram);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        ShaderHelper.checkGLError("onDraw");
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
-        ShaderHelper.checkGLError("onDraw");
+
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, mTexture);
         GLES20.glEnableVertexAttribArray(a_Position);
-        ShaderHelper.checkGLError("onDraw");
-//        GLES20.glEnableVertexAttribArray(a_TexCoord);
-        ShaderHelper.checkGLError("onDraw");
+        GLES20.glEnableVertexAttribArray(a_TexCoord);
 
         GLES20.glUniformMatrix4fv(a_MvpMatrix, 1, false, mMVPMatrix, 0);
-        ShaderHelper.checkGLError("onDraw");
         GLES20.glVertexAttribPointer(a_Position, 4, GLES20.GL_FLOAT, false, 0, mVertexCoord);
-        ShaderHelper.checkGLError("onDraw");
-//        GLES20.glVertexAttribPointer(a_TexCoord,2,GLES20.GL_FLOAT,false,2,mTextureCoord);
-        ShaderHelper.checkGLError("onDraw");
-        ShaderHelper.checkGLError("onDraw");
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,8);
+        GLES20.glVertexAttribPointer(a_TexCoord, 2, GLES20.GL_FLOAT, false, 2, mTextureCoord);
+
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, index.length, GLES20.GL_UNSIGNED_SHORT, mIndexBuffer);
-        ShaderHelper.checkGLError("onDraw");
+
         GLES20.glDisableVertexAttribArray(a_Position);
-//        GLES20.glDisableVertexAttribArray(a_TexCoord);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glDisableVertexAttribArray(a_TexCoord);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, 0);
+
+        ShaderHelper.checkGLError("onDraw");
     }
 }
