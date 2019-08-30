@@ -1,3 +1,3 @@
 # OpenGL4Android
-OpenGL ES2.0,渲染Bitmap
-渲染三角形
+1. OpenGL ES2.0,渲染Bitmap
+2. 渲染三角形
