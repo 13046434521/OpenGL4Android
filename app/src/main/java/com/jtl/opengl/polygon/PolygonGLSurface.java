@@ -16,6 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class PolygonGLSurface extends BaseGLSurface {
     private TriangleRender mTriangleRender;
+    private CubeRender mCubeRender;
     public PolygonGLSurface(Context context) {
         super(context);
     }
@@ -28,17 +29,22 @@ public class PolygonGLSurface extends BaseGLSurface {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
         mTriangleRender=new TriangleRender();
-        mTriangleRender.createdGLThread(getContext());
+        mTriangleRender.createdGLThread(getContext().getApplicationContext());
+
+        mCubeRender = new CubeRender();
+        mCubeRender.createdGLThread(getContext().getApplicationContext());
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         super.onSurfaceChanged(gl, width, height);
+        mCubeRender.setViewPort(width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
-        mTriangleRender.onDraw();
+//        mTriangleRender.onDraw();
+        mCubeRender.onDraw();
     }
 }

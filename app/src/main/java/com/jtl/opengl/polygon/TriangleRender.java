@@ -1,7 +1,6 @@
 package com.jtl.opengl.polygon;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.opengl.GLES20;
 
 import com.jtl.opengl.base.BaseRender;
@@ -42,8 +41,8 @@ public class TriangleRender extends BaseRender {
 
     private void initProgram(Context context) {
         mProgram = GLES20.glCreateProgram();
-        int vertexShader = ShaderHelper.loadGLShader(TAG, context.getApplicationContext(), GLES20.GL_VERTEX_SHADER, VERTEX_SHADER_NAME);
-        int fragmentShader = ShaderHelper.loadGLShader(TAG, context.getApplicationContext(), GLES20.GL_FRAGMENT_SHADER, FRAGMENT_SHADER_NAME);
+        int vertexShader = ShaderHelper.loadGLShader(TAG, context, GLES20.GL_VERTEX_SHADER, VERTEX_SHADER_NAME);
+        int fragmentShader = ShaderHelper.loadGLShader(TAG, context, GLES20.GL_FRAGMENT_SHADER, FRAGMENT_SHADER_NAME);
         GLES20.glAttachShader(mProgram, vertexShader);
         GLES20.glAttachShader(mProgram, fragmentShader);
         GLES20.glLinkProgram(mProgram);
