@@ -1,10 +1,10 @@
 package com.jtl.opengl.bitmap;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 import com.jtl.opengl.R;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class BitmapActivity extends AppCompatActivity {
     private BitmapGLSurface mBitmapGLSurface;

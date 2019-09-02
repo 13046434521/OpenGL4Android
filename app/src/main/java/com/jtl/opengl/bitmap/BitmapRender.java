@@ -4,9 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 
-import com.jtl.opengl.helper.ShaderHelper;
 import com.jtl.opengl.base.BaseRender;
+import com.jtl.opengl.helper.ShaderHelper;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -29,6 +30,7 @@ public class BitmapRender extends BaseRender {
     private int a_Position;
     private int a_TexCoord;
     private int u_TextureUnit;
+    private int u_MvpMatrix;
 
     private Bitmap mBitmap;
     private FloatBuffer mTextureCoord;
@@ -50,11 +52,26 @@ public class BitmapRender extends BaseRender {
             1.0f, -1.0f
     };
 
+    //正交矩阵
+    private float[] orthoMatrix = new float[16];
+
     @Override
     protected void createdGLThread(Context context) {
         initProgram(context);
         initData(context);
         initTexture();
+    }
+
+    protected void onSurfaceChanged(float width, float height) {
+        float ratio = width > height ? width / height : height / width;
+
+        if (width > height) {
+            //landscape 横屏 宽>高
+            Matrix.orthoM(orthoMatrix, 0, -ratio, ratio, -1f, 1f, -1f, 1f);
+        } else {
+            //portrait 竖屏 高>宽
+            Matrix.orthoM(orthoMatrix, 0, -1f, 1f, -ratio, ratio, -1f, 1f);
+        }
     }
 
     private void initProgram(Context context) {
@@ -72,9 +89,8 @@ public class BitmapRender extends BaseRender {
         a_Position = GLES20.glGetAttribLocation(mProgram, "a_Position");
         a_TexCoord = GLES20.glGetAttribLocation(mProgram, "a_TexCoord");
         u_TextureUnit = GLES20.glGetUniformLocation(mProgram, "u_TextureUnit");
+        u_MvpMatrix = GLES20.glGetUniformLocation(mProgram, "u_MvpMatrix");
 
-        GLES20.glDetachShader(mProgram,mVertexShader);
-        GLES20.glDetachShader(mProgram,mFragShader);
         GLES20.glDeleteShader(mVertexShader);
         GLES20.glDeleteShader(mFragShader);
         ShaderHelper.checkGLError("initProgram");
@@ -128,6 +144,8 @@ public class BitmapRender extends BaseRender {
     protected void onDraw() {
         GLES20.glUseProgram(mProgram);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
+
+        GLES20.glUniformMatrix4fv(u_MvpMatrix, 1, false, orthoMatrix, 0);
 
         GLES20.glEnableVertexAttribArray(a_Position);
         GLES20.glEnableVertexAttribArray(a_TexCoord);

@@ -1,10 +1,10 @@
 package com.jtl.opengl.polygon;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 import com.jtl.opengl.R;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class PolygonActivity extends AppCompatActivity {
     private PolygonGLSurface mPolygonGLSurface;

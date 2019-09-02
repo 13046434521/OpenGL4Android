@@ -38,7 +38,7 @@ public static int loadGLShader(String tag, Context context, int type, String fil
 	if (shader == 0) {
 		throw new RuntimeException("Error creating shader.");
 	}
-
+	GLES20.glReleaseShaderCompiler();
 	return shader;
 }
 

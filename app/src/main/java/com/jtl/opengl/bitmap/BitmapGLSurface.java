@@ -35,6 +35,7 @@ public class BitmapGLSurface extends BaseGLSurface {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         super.onSurfaceChanged(gl, width, height);
+        mBitmapRender.onSurfaceChanged(width, height);
     }
 
     @Override
