@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.jtl.opengl.R;
 import com.jtl.opengl.bitmap.BitmapActivity;
 import com.jtl.opengl.polygon.PolygonActivity;
+import com.jtl.opengl.skybox.SkyBoxActivity;
 import com.jtl.opengl.texture.TextureActivity;
 
 import java.util.ArrayList;
@@ -21,8 +22,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private MenuAdapter mMenuAdapter;
     private LinearLayoutManager mLinearLayoutManager;
-    private String[] data = new String[]{"多边形", "Bitmap", "纹理"};
-    private Class[] classData = new Class[]{PolygonActivity.class, BitmapActivity.class, TextureActivity.class};
+    private String[] data = new String[]{"多边形", "Bitmap", "纹理", "天空盒"};
+    private Class[] classData = new Class[]{PolygonActivity.class, BitmapActivity.class, TextureActivity.class, SkyBoxActivity.class};
     private List<MenuBean> mMenuBeanList = new ArrayList<>(16);
 
     @Override

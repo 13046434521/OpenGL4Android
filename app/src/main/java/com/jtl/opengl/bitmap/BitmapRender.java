@@ -8,11 +8,13 @@ import android.opengl.Matrix;
 
 import com.jtl.opengl.base.BaseRender;
 import com.jtl.opengl.helper.ShaderHelper;
+import com.socks.library.KLog;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 /**
  * 作者:jtl
@@ -24,7 +26,7 @@ public class BitmapRender extends BaseRender {
     private static final String TAG = BitmapRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/bitmap_vertex.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/bitmap_frag.glsl";
-    private static final String bitmapFile = "model/nba.jpg";
+    private static final String bitmapFile = "model/zhangli.jpg";
     private int mProgram;
     private int[] texture = new int[1];
     private int a_Position;
@@ -62,16 +64,22 @@ public class BitmapRender extends BaseRender {
         initTexture();
     }
 
+
+    @Override
     protected void onSurfaceChanged(float width, float height) {
         float ratio = width > height ? width / height : height / width;
 
         if (width > height) {
-            //landscape 横屏 宽>高
+            //landscape 横屏 width:2340 > height:856  orthoMatrix:[0.36581194, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.0, -0.0, -0.0, 1.0]
+            // 把每个点的x值缩小了
             Matrix.orthoM(orthoMatrix, 0, -ratio, ratio, -1f, 1f, -1f, 1f);
         } else {
-            //portrait 竖屏 高>宽
+            //portrait 竖屏 height:2092 > width:1080   orthoMatrix:[1.0, 0.0, 0.0, 0.0, 0.0, 0.5162524, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.0, -0.0, -0.0, 1.0]
+            // 把每个点的y值缩小了
             Matrix.orthoM(orthoMatrix, 0, -1f, 1f, -ratio, ratio, -1f, 1f);
         }
+
+        KLog.w(TAG, "height:" + height + " width:" + width + " " + Arrays.toString(orthoMatrix));
     }
 
     private void initProgram(Context context) {
@@ -130,13 +138,13 @@ public class BitmapRender extends BaseRender {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
 //        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, mBitmap, 0);
-//        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
+//        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);在过滤缩小时，选择带有mipmap的选项会用到
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
         ShaderHelper.checkGLError("initTexture");
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(float[] data) {
 
     }
 

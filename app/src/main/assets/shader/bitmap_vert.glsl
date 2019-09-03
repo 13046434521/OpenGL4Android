@@ -4,6 +4,6 @@ uniform mat4 u_MvpMatrix;
 varying vec2 v_TexCoord;
 
 void main() {
-    gl_Position = u_MvpMatrix*a_Position;
+    gl_Position = u_MvpMatrix * a_Position;
     v_TexCoord = a_TexCoord;
 }

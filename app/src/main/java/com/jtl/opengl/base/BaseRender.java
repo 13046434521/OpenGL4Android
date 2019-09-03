@@ -10,6 +10,9 @@ import android.content.Context;
  */
 public abstract class BaseRender {
     protected abstract void createdGLThread(Context context);
-    protected abstract void onUpdate();
+
+    protected abstract void onSurfaceChanged(float width, float height);
+
+    protected abstract void onUpdate(float[] data);
     protected abstract void onDraw();
 }

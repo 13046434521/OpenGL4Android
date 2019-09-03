@@ -77,6 +77,11 @@ public class CubeRender extends BaseRender {
         initTexture(context);
     }
 
+    @Override
+    protected void onSurfaceChanged(float width, float height) {
+
+    }
+
     private void initProgram(Context context) {
         mProgram = GLES20.glCreateProgram();
         int vertexShader = ShaderHelper.loadGLShader(TAG, context, GLES20.GL_VERTEX_SHADER, VERTEX_SHADER_NAME);
@@ -173,7 +178,7 @@ public class CubeRender extends BaseRender {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(float[] data) {
 
     }
 

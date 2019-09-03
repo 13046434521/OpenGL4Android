@@ -9,10 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.jtl.opengl.texture.TextureActivity"></activity>
-        <activity android:name="com.jtl.opengl.bitmap.BitmapActivity" />
-        <activity android:name="com.jtl.opengl.polygon.PolygonActivity" />
-        <activity android:name="com.jtl.opengl.menu.MainActivity">
+        <activity android:name=".skybox.SkyBoxActivity"></activity>
+        <activity android:name=".texture.TextureActivity" />
+        <activity android:name=".bitmap.BitmapActivity" />
+        <activity android:name=".polygon.PolygonActivity" />
+        <activity android:name=".menu.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
