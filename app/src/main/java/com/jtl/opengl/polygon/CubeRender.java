@@ -27,7 +27,7 @@ public class CubeRender extends BaseRender {
     private static final String TAG = CubeRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/cube_vertex.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/cube_frag.glsl";
-    private static final String bitmapFilePath = "model/zhangli.jpg";
+    private static final String bitmapFilePath = "model/nba.jpg";
     private Bitmap[] mBitmaps = new Bitmap[6];
     private short[] index = new short[]{
             6, 7, 4, 6, 4, 5,    //后面

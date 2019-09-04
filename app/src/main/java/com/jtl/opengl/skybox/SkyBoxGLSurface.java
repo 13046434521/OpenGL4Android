@@ -1,6 +1,7 @@
 package com.jtl.opengl.skybox;
 
 import android.content.Context;
+import android.opengl.Matrix;
 import android.util.AttributeSet;
 
 import com.jtl.opengl.base.BaseGLSurface;
@@ -31,6 +32,8 @@ public class SkyBoxGLSurface extends BaseGLSurface {
         super.onSurfaceCreated(gl, config);
         mSkyBoxRender = new SkyBoxRender();
         mSkyBoxRender.createdGLThread(getContext().getApplicationContext());
+
+        Matrix.setIdentityM(rotateMatrix, 0);
     }
 
     @Override

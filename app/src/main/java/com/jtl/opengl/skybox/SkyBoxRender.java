@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * 作者:jtl
@@ -26,21 +25,18 @@ public class SkyBoxRender extends BaseRender {
     private static final String TAG = SkyBoxRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/skybox_vert.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/skybox_frag.glsl";
-    private static final String[] bitmapFilePath = new String[]{"model/sahara_lf.jpg", "model/sahara_rt.jpg",
-            "model/sahara_dn.jpg", "model/sahara_up.jpg"
-            , "model/sahara_ft.jpg", "model/sahara_bk.jpg"};
+    //    private static final String[] bitmapFilePath = new String[]{"model/sahara_lf.jpg", "model/sahara_rt.jpg",
+//            "model/sahara_dn.jpg", "model/sahara_up.jpg"
+//            , "model/sahara_ft.jpg", "model/sahara_bk.jpg"};
+    private static final String[] bitmapFilePath = new String[]{"model/left.jpg", "model/right.jpg",
+            "model/bottom.jpg", "model/top.jpg"
+            , "model/front.jpg", "model/back.jpg"};
     private int mProgram;
     private int[] textureId = new int[1];
     private int a_Position;
     private int u_MvpMatrix;
     private int u_TextureUnit;
-    //纹理坐标
-    private float[] textureCoord = new float[]{
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-    };
+
     //顶点坐标
     private float[] vertexCoord = new float[]{
             -1f, 1f, 1f,    //(0) Top-left near
@@ -52,7 +48,18 @@ public class SkyBoxRender extends BaseRender {
             -1f, -1f, -1f,  //(6) Bottom-left far
             1f, -1f, -1f,   //(7) Bottom-right far
     };
-    private short[] index = new short[]{
+
+    //    private float[] vertexCoord = new float[]{
+//            -0.5f, 0.5f, 0.5f,    //(0) Top-left near
+//            0.5f, 0.5f, 0.5f,     //(0.5) Top-right near
+//            -0.5f, -0.5f, 0.5f,   //(2) Bottom-left near
+//            0.5f, -0.5f, 0.5f,    //(3) Bottom-right near
+//            -0.5f, 0.5f, -0.5f,   //(4) Top-left far
+//            0.5f, 0.5f, -0.5f,    //(5) Top-right far
+//            -0.5f, -0.5f, -0.5f,  //(6) Bottom-left far
+//            0.5f, -0.5f, -0.5f,   //(7) Bottom-right far
+//    };
+    private byte[] index = new byte[]{
             1, 3, 0,
             0, 3, 2,
             1, 5, 3,
@@ -67,13 +74,39 @@ public class SkyBoxRender extends BaseRender {
             3, 6, 2,
     };
 
+//    // 立方体索引
+//    private short[] index = new short[] {
+//            // Front
+//            1, 3, 0,
+//            0, 3, 2,
+//
+//            // Back
+//            4, 6, 5,
+//            5, 6, 7,
+//
+//            // Left
+//            0, 2, 4,
+//            4, 2, 6,
+//
+//            // Right
+//            5, 7, 1,
+//            1, 7, 3,
+//
+//            // Top
+//            5, 1, 4,
+//            4, 1, 0,
+//
+//            // Bottom
+//            6, 2, 7,
+//            7, 2, 3
+//    };
+
     private float[] viewMatrix = new float[16];
     private float[] projectionMatrix = new float[16];
     private float[] mvpMatrix = new float[16];
 
     private FloatBuffer mVertexCoord;
-    private FloatBuffer mTextureCoord;
-    private ShortBuffer mIndexBuffer;
+    private ByteBuffer mIndexBuffer;
 
     private Bitmap[] mBitmaps = new Bitmap[6];
 
@@ -90,12 +123,12 @@ public class SkyBoxRender extends BaseRender {
         //设置相机位置
         Matrix.setLookAtM(viewMatrix, 0,
                 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, -5.0f,
+                0.0f, 0.0f, -1.0f,
                 0f, 1.0f, 0.0f);
 
         // 设置透视矩阵
         float ratio = width / height;
-        Matrix.perspectiveM(projectionMatrix, 0, 45, ratio, 1f, 300f);
+        Matrix.perspectiveM(projectionMatrix, 0, 45, ratio, 1f, 100f);
     }
 
     private void initProgram(Context context) {
@@ -139,15 +172,8 @@ public class SkyBoxRender extends BaseRender {
             mVertexCoord.put(vertexCoord);
             mVertexCoord.position(0);
 
-            ByteBuffer textureBuffer = ByteBuffer.allocateDirect(textureCoord.length * 4);
-            textureBuffer.order(ByteOrder.nativeOrder());
-            mTextureCoord = textureBuffer.asFloatBuffer();
-            mTextureCoord.put(textureCoord);
-            mTextureCoord.position(0);
-
-            ByteBuffer indexBuffer = ByteBuffer.allocateDirect(index.length * 2);
-            indexBuffer.order(ByteOrder.nativeOrder());
-            mIndexBuffer = indexBuffer.asShortBuffer();
+            mIndexBuffer = ByteBuffer.allocateDirect(index.length * 2);
+            mIndexBuffer.order(ByteOrder.nativeOrder());
             mIndexBuffer.put(index);
             mIndexBuffer.position(0);
 
@@ -189,31 +215,30 @@ public class SkyBoxRender extends BaseRender {
 
     @Override
     protected void onUpdate(float[] rotateMatrix) {
-        // 计算综合矩阵
+        // MVP矩阵
         Matrix.setIdentityM(viewMatrix, 0);
         Matrix.setLookAtM(viewMatrix, 0,
                 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, -10.0f,
-                0f, 1.0f, 0.0f);
+                0.0f, 0.0f, -1.0f,
+                0f, 1f, 0f);
         Matrix.multiplyMM(viewMatrix, 0, viewMatrix, 0, rotateMatrix, 0);
-        Matrix.rotateM(viewMatrix, 0, 90, 1f, 0f, 0f);
+//        Matrix.rotateM(viewMatrix, 0, 90, 1f, 0f, 0f);
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
     }
 
     @Override
     protected void onDraw() {
         GLES20.glUseProgram(mProgram);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureId[0]);
 
         GLES20.glUniformMatrix4fv(u_MvpMatrix, 1, false, mvpMatrix, 0);
 
         GLES20.glEnableVertexAttribArray(a_Position);
-//        GLES20.glEnableVertexAttribArray(a_Texture);
 
         GLES20.glVertexAttribPointer(a_Position, 3, GLES20.GL_FLOAT, false, 0, mVertexCoord);
-//        GLES20.glVertexAttribPointer(a_Texture, 2, GLES20.GL_FLOAT, false, 0, mTextureCoord);
 
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, index.length, GLES20.GL_UNSIGNED_SHORT, mIndexBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, index.length, GLES20.GL_UNSIGNED_BYTE, mIndexBuffer);
         GLES20.glEnableVertexAttribArray(a_Position);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, 0);
         GLES20.glUseProgram(mProgram);

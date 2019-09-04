@@ -18,7 +18,7 @@ import java.nio.FloatBuffer;
  */
 public class TriangleRender extends BaseRender {
     private static final String TAG = TriangleRender.class.getSimpleName();
-    private static final String VERTEX_SHADER_NAME = "shader/triangle_vertex.glsl";
+    private static final String VERTEX_SHADER_NAME = "shader/triangle_vert.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/triangle_frag.glsl";
     private int mProgram;
     private int a_Position;

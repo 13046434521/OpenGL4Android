@@ -24,7 +24,7 @@ import java.util.Arrays;
  */
 public class BitmapRender extends BaseRender {
     private static final String TAG = BitmapRender.class.getSimpleName();
-    private static final String VERTEX_SHADER_NAME = "shader/bitmap_vertex.glsl";
+    private static final String VERTEX_SHADER_NAME = "shader/bitmap_vert.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/bitmap_frag.glsl";
     private static final String bitmapFile = "model/zhangli.jpg";
     private int mProgram;
