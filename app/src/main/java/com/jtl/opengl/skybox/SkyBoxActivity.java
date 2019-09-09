@@ -1,14 +1,12 @@
 package com.jtl.opengl.skybox;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.view.Display;
 
 import com.jtl.opengl.R;
 import com.jtl.opengl.base.BaseActivity;
@@ -19,7 +17,6 @@ public class SkyBoxActivity extends BaseActivity implements SensorEventListener 
     private Sensor mRotationSensor;
     private float[] mRotateMatrix = new float[16];
     private float[] mTranslateMatrix = new float[16];
-    private Point mPoint;
 
     @Override
     protected void onPause() {
@@ -39,9 +36,7 @@ public class SkyBoxActivity extends BaseActivity implements SensorEventListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView1(R.layout.activity_sky_box);
-        Display defaultDisplay = getWindowManager().getDefaultDisplay();
-        mPoint = new Point();
-        defaultDisplay.getSize(mPoint);
+
         Matrix.setIdentityM(mRotateMatrix, 0);
         Matrix.setIdentityM(mTranslateMatrix, 0);
         mSkyBoxGLSurface = findViewById(R.id.gl_sky_surface);
