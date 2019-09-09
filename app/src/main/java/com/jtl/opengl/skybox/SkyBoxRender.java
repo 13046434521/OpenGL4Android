@@ -128,6 +128,7 @@ public class SkyBoxRender extends BaseRender {
     }
 
     private void initData() {
+        //初始化为单位矩阵
         Matrix.setIdentityM(viewMatrix, 0);
         Matrix.setIdentityM(projectionMatrix, 0);
         Matrix.setIdentityM(mvpMatrix, 0);
@@ -196,8 +197,6 @@ public class SkyBoxRender extends BaseRender {
     protected void onDraw() {
         GLES20.glUseProgram(mProgram);
 
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDepthMask(true);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureId[0]);
         GLES20.glUniform1i(u_TextureUnit, 0);
         GLES20.glUniformMatrix4fv(u_MvpMatrix, 1, false, mvpMatrix, 0);
