@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.MotionEvent;
 
 import com.jtl.opengl.R;
 
@@ -80,43 +79,43 @@ public class SkyBoxActivity extends AppCompatActivity implements SensorEventList
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-//        float[] rotate = new float[16];
-//        Matrix.setIdentityM(mRotateMatrix, 0);
-
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            eventX = event.getX();
-            eventY = event.getY();
-            Matrix.rotateM(mRotateMatrix, 0, 10, 1f, 1f, 1f);
-//            Matrix.rotateM(mRotateMatrix,0,45,0f,1f,0f);
-//            mRotateMatrix =rotate;
-            mSkyBoxGLSurface.queueEvent(new Runnable() {
-                @Override
-                public void run() {
-                    mSkyBoxGLSurface.setRotateMatrix(mRotateMatrix);
-                }
-            });
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            Matrix.translateM(mTranslateMatrix, 0, (event.getX() - eventX) / mPoint.x, -(event.getY() - eventY) / mPoint.y, -10f);
-            eventX = event.getX();
-            eventY = event.getY();
-//            mRotateMatrix =rotate;
-            mSkyBoxGLSurface.queueEvent(new Runnable() {
-                @Override
-                public void run() {
-//                    mSkyBoxGLSurface.setRotateMatrix(mTranslateMatrix);
-                }
-            });
-        } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-            eventX = 0;
-            eventY = 0;
-
-//            Matrix.setIdentityM(mTranslateMatrix,0);
-//            Matrix.setIdentityM(mRotateMatrix,0);
-        }
-
-
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+////        float[] rotate = new float[16];
+////        Matrix.setIdentityM(mRotateMatrix, 0);
+//
+//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//            eventX = event.getX();
+//            eventY = event.getY();
+//            Matrix.rotateM(mRotateMatrix, 0, 10, 1f, 1f, 1f);
+////            Matrix.rotateM(mRotateMatrix,0,45,0f,1f,0f);
+////            mRotateMatrix =rotate;
+//            mSkyBoxGLSurface.queueEvent(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mSkyBoxGLSurface.setRotateMatrix(mRotateMatrix);
+//                }
+//            });
+//        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//            Matrix.translateM(mTranslateMatrix, 0, (event.getX() - eventX) / mPoint.x, -(event.getY() - eventY) / mPoint.y, -10f);
+//            eventX = event.getX();
+//            eventY = event.getY();
+////            mRotateMatrix =rotate;
+//            mSkyBoxGLSurface.queueEvent(new Runnable() {
+//                @Override
+//                public void run() {
+////                    mSkyBoxGLSurface.setRotateMatrix(mTranslateMatrix);
+//                }
+//            });
+//        } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+//            eventX = 0;
+//            eventY = 0;
+//
+////            Matrix.setIdentityM(mTranslateMatrix,0);
+////            Matrix.setIdentityM(mRotateMatrix,0);
+//        }
+//
+//
+//        return true;
+//    }
 }

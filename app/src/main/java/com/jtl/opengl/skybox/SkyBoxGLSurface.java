@@ -39,6 +39,7 @@ public class SkyBoxGLSurface extends BaseGLSurface {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         super.onSurfaceChanged(gl, width, height);
+        mSkyBoxRender.onSurfaceChanged(width, height);
     }
 
     @Override
