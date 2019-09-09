@@ -1,16 +1,17 @@
 package com.jtl.opengl.texture;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 import com.jtl.opengl.R;
+import com.jtl.opengl.base.BaseActivity;
 
-public class TextureActivity extends AppCompatActivity {
+public class TextureActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_texture);
+        setContentView1(R.layout.activity_texture);
+
+        mToolbar.setTitle(R.string.activity_camera);
     }
 }

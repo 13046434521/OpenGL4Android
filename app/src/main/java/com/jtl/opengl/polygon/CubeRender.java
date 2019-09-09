@@ -73,7 +73,9 @@ public class CubeRender extends BaseRender {
         //计算宽高比
         float ratio = width / height;
         //设置 ViewMatrix
+
         Matrix.setLookAtM(mViewMatrix, 0, 5.0f, 5.0f, -10.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+
         //两种设置 ProjectMatrix的方法
 //        Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 3, 20);
         Matrix.perspectiveM(mProjectMatrix, 0, 45, -ratio, 1, 100);
@@ -153,10 +155,8 @@ public class CubeRender extends BaseRender {
         Matrix.setIdentityM(mViewMatrix, 0);
         //设置 ViewMatrix
         Matrix.setLookAtM(mViewMatrix, 0, 5.0f, 5.0f, -10.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-
         //进行旋转
         Matrix.multiplyMM(mViewMatrix, 0, mViewMatrix, 0, rotateMatrix, 0);
-
         //设置 MVPMatrix
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
     }

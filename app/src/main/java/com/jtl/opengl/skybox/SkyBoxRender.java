@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.jtl.opengl.base.BaseRender;
 import com.jtl.opengl.helper.ShaderHelper;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 /**
  * 作者:jtl
@@ -187,9 +185,6 @@ public class SkyBoxRender extends BaseRender {
 
         Matrix.rotateM(viewMatrix, 0, 90, 1f, 0f, 0f);
 
-        Log.d("Matrix", "\nmViewMatrix:\n" + Arrays.toString(viewMatrix));
-        Log.w("Matrix", "\nmProjectionMatrix:\n" + Arrays.toString(projectionMatrix));
-        Log.e("Matrix", "\nmMVPMatrix:\n" + Arrays.toString(mvpMatrix));
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
     }
 

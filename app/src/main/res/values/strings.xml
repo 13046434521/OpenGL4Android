@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">OpenGL4Android</string>
+    <string name="activity_polygon">多边形</string>
+    <string name="activity_bitmap">Bitmap</string>
+    <string name="activity_skybox">天空盒</string>
+    <string name="activity_camera">Camera</string>
+    <string name="triangle">三角形</string>
+    <string name="cube">立方体</string>
 </resources>

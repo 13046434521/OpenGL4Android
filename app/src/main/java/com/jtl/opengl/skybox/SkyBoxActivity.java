@@ -11,10 +11,9 @@ import android.os.Bundle;
 import android.view.Display;
 
 import com.jtl.opengl.R;
+import com.jtl.opengl.base.BaseActivity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-public class SkyBoxActivity extends AppCompatActivity implements SensorEventListener {
+public class SkyBoxActivity extends BaseActivity implements SensorEventListener {
     private SkyBoxGLSurface mSkyBoxGLSurface;
     private SensorManager mSensorManager;
     private Sensor mRotationSensor;
@@ -39,14 +38,14 @@ public class SkyBoxActivity extends AppCompatActivity implements SensorEventList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sky_box);
+        setContentView1(R.layout.activity_sky_box);
         Display defaultDisplay = getWindowManager().getDefaultDisplay();
         mPoint = new Point();
         defaultDisplay.getSize(mPoint);
         Matrix.setIdentityM(mRotateMatrix, 0);
         Matrix.setIdentityM(mTranslateMatrix, 0);
         mSkyBoxGLSurface = findViewById(R.id.gl_sky_surface);
-
+        mToolbar.setTitle(R.string.activity_skybox);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);//旋转矢量传感器

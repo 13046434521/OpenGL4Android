@@ -3,17 +3,17 @@ package com.jtl.opengl.bitmap;
 import android.os.Bundle;
 
 import com.jtl.opengl.R;
+import com.jtl.opengl.base.BaseActivity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-public class BitmapActivity extends AppCompatActivity {
+public class BitmapActivity extends BaseActivity {
     private BitmapGLSurface mBitmapGLSurface;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bitmap);
+        setContentView1(R.layout.activity_bitmap);
 
         mBitmapGLSurface=findViewById(R.id.gl_bitmap_surface);
+        mToolbar.setTitle(R.string.activity_bitmap);
     }
 
     @Override
