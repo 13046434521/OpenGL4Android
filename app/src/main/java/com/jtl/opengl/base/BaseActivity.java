@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.jtl.opengl.R;
 
@@ -15,7 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 public class BaseActivity extends AppCompatActivity {
     protected Toolbar mToolbar;
     private FrameLayout mFrameLayout;
-    private Point mPoint;
+    protected Point mPoint;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,5 +33,14 @@ public class BaseActivity extends AppCompatActivity {
     public void setContentView1(@LayoutRes int res) {
         View view = View.inflate(this, res, null);
         mFrameLayout.addView(view);
+    }
+
+    protected void showToast(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(BaseActivity.this, text, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
