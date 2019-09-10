@@ -3,6 +3,7 @@ package com.jtl.opengl.camera;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.jtl.opengl.Constant;
 import com.jtl.opengl.base.BaseGLSurface;
 
 import java.nio.ByteBuffer;
@@ -18,9 +19,10 @@ import javax.microedition.khronos.opengles.GL10;
  * 更改:
  */
 public class CameraGLSurface extends BaseGLSurface {
-    private volatile byte[] mData;
-    private int width;
-    private int height;
+    private byte[] mYData;
+    private byte[] mUVData;
+    private int width = Constant.WIDTH;
+    private int height = Constant.HEIGHT;
     private ByteBuffer mYBuffer;
     private ByteBuffer mUVBuffer;
     private BackGroundNV12RenderNew mBackGroundNV12RenderNew;
@@ -31,6 +33,19 @@ public class CameraGLSurface extends BaseGLSurface {
 
     public CameraGLSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initData();
+    }
+
+    private void initData() {
+        mYData = new byte[width * height];
+        mYBuffer = ByteBuffer.allocateDirect(width * height);
+        mYBuffer.order(ByteOrder.nativeOrder());
+        mYBuffer.position(0);
+
+        mUVData = new byte[width * height / 2];
+        mUVBuffer = ByteBuffer.allocateDirect(width * height / 2);
+        mUVBuffer.order(ByteOrder.nativeOrder());
+        mUVBuffer.position(0);
     }
 
     @Override
@@ -43,8 +58,8 @@ public class CameraGLSurface extends BaseGLSurface {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         super.onSurfaceChanged(gl, width, height);
-        this.width = width;
-        this.height = height;
+//        this.width = width;
+//        this.height = height;
     }
 
     @Override
@@ -54,19 +69,18 @@ public class CameraGLSurface extends BaseGLSurface {
     }
 
     public void setCameraData(byte[] data) {
-        mData = new byte[data.length];
-        System.arraycopy(mData, 0, data, 0, data.length);
+        if (data != null && data.length > 0) {
+            System.arraycopy(data, 0, mYData, 0, mYData.length);
+            System.arraycopy(data, mYData.length, mUVData, 0, data.length - mYData.length);
+            mYBuffer.put(mYData).position(0);
+            mUVBuffer.put(mUVData).position(0);
+        }
     }
 
     public void setCameraData(ByteBuffer yData, ByteBuffer uvData) {
-        if (mYBuffer == null) {
-            mYBuffer = ByteBuffer.allocateDirect(yData.capacity());
-            mYBuffer.order(ByteOrder.nativeOrder());
-        }
-        if (mUVBuffer == null) {
-            mUVBuffer = ByteBuffer.allocateDirect(uvData.capacity());
-            mUVBuffer.order(ByteOrder.nativeOrder());
-        }
+        yData.get(mYData, 0, yData.limit());
+        uvData.get(mUVData, 0, uvData.limit());
+
         mYBuffer.position(0);
         mUVBuffer.position(0);
         mYBuffer.put(yData).position(0);

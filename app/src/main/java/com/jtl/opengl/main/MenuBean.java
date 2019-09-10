@@ -1,4 +1,4 @@
-package com.jtl.opengl.menu;
+package com.jtl.opengl.main;
 
 /**
  * 作者:jtl

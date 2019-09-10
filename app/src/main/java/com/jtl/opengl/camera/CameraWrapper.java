@@ -5,14 +5,19 @@ import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Size;
 import android.view.Surface;
+
+import com.socks.library.KLog;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -38,7 +43,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
     private boolean isAutoFocus;
     private byte[] mImageData = null;
     private CameraDevice mCameraDevice;
-    private CameraCaptureSession mColorCaptureSession;
+    private CameraCaptureSession mCaptureSession;
     private ImageReader mColorImageReader;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
@@ -47,7 +52,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
     private Handler mBackgroundHandler;
     // 彩色相机打开关闭锁
     private Semaphore mCameraSemaphore = new Semaphore(1);
-
+    private Size mSizes;
     public CameraWrapper(Context context, String cameraId, int width, int height, boolean isAutoFocus, CameraDataListener cameraDataListener) {
         mContext = context;
         mCameraId = cameraId;
@@ -57,12 +62,34 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         mCameraDataListener = cameraDataListener;
     }
 
+    public static Size[] getSizes(Context context, String cameraId) {
+        Size[] sizes = null;
+        CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        try {
+            CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(cameraId);
+            StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            sizes = map.getOutputSizes(ImageFormat.YUV_420_888);
+
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
+        return sizes;
+    }
+
     @SuppressLint("MissingPermission")
     public void openCamera() {
         startBackgroundThread();
-
         CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
+            CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(mCameraId);
+            StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            Size[] sizes = map.getOutputSizes(ImageFormat.YUV_420_888);
+            for (Size size : sizes) {
+                KLog.w(TAG, "size:" + size.toString());
+                mSizes = size;
+            }
+
             if (!mCameraSemaphore.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 return;
             }
@@ -128,7 +155,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                                 return;
                             }
 
-                            mColorCaptureSession = cameraCaptureSession;
+                            mCaptureSession = cameraCaptureSession;
                             try {
                                 if (isAutoFocus) {
                                     // 自动对焦
@@ -140,11 +167,10 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                                 }
 //                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
                                 mPreviewRequest = mPreviewRequestBuilder.build();
-                                mColorCaptureSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
+                                mCaptureSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
 
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
-
                             }
                         }
 
@@ -154,31 +180,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                     }, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void closeCamera() {
-        try {
-            mCameraSemaphore.acquire();
-            if (null != mColorCaptureSession) {
-                mColorCaptureSession.close();
-                mColorCaptureSession = null;
-            }
-            if (null != mCameraDevice) {
-                mCameraDevice.close();
-                mCameraDevice = null;
-            }
-            if (null != mColorImageReader) {
-                mColorImageReader.close();
-                mColorImageReader = null;
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock color camera closing.", e);
-        } finally {
-            mCameraSemaphore.release();
-            mImageData = null;
-
-            stopBackgroundThread();
         }
     }
 
@@ -199,39 +200,29 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         }
     }
 
-    @Override
-    public void onImageAvailable(ImageReader reader) {
-        if (reader == null) {
-            return;
-        }
-        Image image = reader.acquireLatestImage();
-        if (image == null) {
-            return;
-        }
+    public void closeCamera() {
+        try {
+            mCameraSemaphore.acquire();
+            if (null != mCaptureSession) {
+                mCaptureSession.close();
+                mCaptureSession = null;
+            }
+            if (null != mCameraDevice) {
+                mCameraDevice.close();
+                mCameraDevice = null;
+            }
+            if (null != mColorImageReader) {
+                mColorImageReader.close();
+                mColorImageReader = null;
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while trying to lock color camera closing.", e);
+        } finally {
+            mCameraSemaphore.release();
+            mImageData = null;
 
-        ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
-        ByteBuffer uvBuffer = image.getPlanes()[1].getBuffer();
-
-        yBuffer.position(0);
-        uvBuffer.position(0);
-////
-//        // 从字节数组缓存池中取用字节数组，如果为null则重新生成
-//        byte[] imageData =null;
-//        if (imageData == null){
-////            Log.d("ReuseByte", "创建yuv数组");
-//            // 系数1.5是由于预览格式为YUV420
-//            KLog.w(TAG,yBuffer.limit()+"---"+uvBuffer.limit()+"---"+(uvBuffer.limit()+yBuffer.limit()));
-//            KLog.d(TAG,mWidth+"---"+mHeight+"---"+mWidth*mHeight*1.5);
-//            imageData = new byte[yBuffer.limit()+uvBuffer.limit()];
-//        }
-//
-//        // 填充Y数据
-//        yBuffer.get(imageData, 0, yBuffer.limit());
-//        // 偏移Y的长度填充UV数据
-//        uvBuffer.get(imageData, yBuffer.limit(), uvBuffer.limit());
-//        mCameraDataListener.setCameraDataListener(imageData,image.getTimestamp(),image.getFormat());
-        mCameraDataListener.setCameraDataListener(yBuffer, uvBuffer, image.getTimestamp(), image.getFormat());
-        image.close();
+            stopBackgroundThread();
+        }
     }
 
     public interface CameraDataListener {
@@ -245,5 +236,41 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         void setCameraDataListener(byte[] imageData, float timestamp, int imageFormat);
 
         void setCameraDataListener(ByteBuffer yData, ByteBuffer uvData, float timestamp, int imageFormat);
+    }
+
+    @Override
+    public void onImageAvailable(ImageReader reader) {
+        if (reader == null) {
+            return;
+        }
+        Image image = reader.acquireLatestImage();
+        if (image == null) {
+            return;
+        }
+
+        int y = image.getPlanes()[0].getBuffer().remaining();
+        int u = image.getPlanes()[1].getBuffer().remaining();
+        int v = image.getPlanes()[2].getBuffer().remaining();
+
+        KLog.w(TAG, image.getWidth() + "---" + image.getHeight() + "  Y:" + y);
+        KLog.v(TAG, image.getWidth() + "---" + image.getHeight() + "  U:" + u);
+        KLog.d(TAG, image.getWidth() + "---" + image.getHeight() + "  V:" + v);
+//        ByteBuffer yBuffer=ByteBuffer.allocateDirect(mWidth*mHeight);
+//        yBuffer.order(ByteOrder.nativeOrder());
+//        yBuffer.put( image.getPlanes()[0].getBuffer(),0);
+//        ByteBuffer uvBuffer=ByteBuffer.allocateDirect(mWidth*mHeight/2);
+        ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
+        ByteBuffer uvBuffer = image.getPlanes()[1].getBuffer();
+
+        yBuffer.position(0);
+        uvBuffer.position(0);
+
+        byte[] imageData = new byte[mHeight * mWidth * 3 / 2];
+        yBuffer.get(imageData, 0, yBuffer.limit());
+        uvBuffer.get(imageData, yBuffer.limit(), uvBuffer.limit());
+
+        mCameraDataListener.setCameraDataListener(imageData, image.getTimestamp(), image.getFormat());
+//        mCameraDataListener.setCameraDataListener(yBuffer, uvBuffer, image.getTimestamp(), image.getFormat());
+        image.close();
     }
 }

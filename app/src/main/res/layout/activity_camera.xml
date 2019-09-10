@@ -6,15 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".camera.CameraActivity">
 
-    <TextView
-        android:id="@+id/tv_camera_test"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.jtl.opengl.camera.CameraGLSurface
         android:id="@+id/gl_camera_surface"
         android:layout_width="0dp"

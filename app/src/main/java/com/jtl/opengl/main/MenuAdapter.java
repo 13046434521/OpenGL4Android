@@ -1,4 +1,4 @@
-package com.jtl.opengl.menu;
+package com.jtl.opengl.main;
 
 import android.content.Context;
 import android.content.Intent;
