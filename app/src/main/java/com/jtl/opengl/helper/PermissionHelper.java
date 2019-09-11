@@ -78,7 +78,7 @@ public final class PermissionHelper {
 
     /**
      * 请求权限
-     *
+     * PermissionHelper.requestPermission(this,new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
      * @param activity
      * @param permissions 权限名称
      * @param requestcode 请求码

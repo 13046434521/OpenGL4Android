@@ -24,10 +24,10 @@ public class CubeRender extends BaseRender {
     private static final String TAG = CubeRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/cube_vertex.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/cube_frag.glsl";
-    //    private static final String bitmapFilePath = "model/nba.jpg";
-    private static final String[] bitmapFilePath = new String[]{"model/right.jpg", "model/left.jpg",
-            "model/top.jpg", "model/bottom.jpg"
-            , "model/back.jpg", "model/front.jpg"};
+    //    private static final String bitmapFilePath = "drawable/nba.jpg";
+    private static final String[] bitmapFilePath = new String[]{"drawable/right.jpg", "drawable/left.jpg",
+            "drawable/top.jpg", "drawable/bottom.jpg"
+            , "drawable/back.jpg", "drawable/front.jpg"};
     private Bitmap[] mBitmaps = new Bitmap[6];
     private byte[] index = new byte[]{
             6, 7, 4, 6, 4, 5,    //后面

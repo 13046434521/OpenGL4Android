@@ -1,5 +1,6 @@
 package com.jtl.opengl.camera;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
@@ -45,8 +46,9 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
 
     //获取权限
     private void initPermission() {
-        if (!PermissionHelper.hasCameraPermission(this)) {
-            PermissionHelper.requestCameraPermission(this);
+        if (!PermissionHelper.hasCameraPermission(this) || !PermissionHelper.hasStoragePermission(this)) {
+            PermissionHelper.requestPermission(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+//            PermissionHelper.requestCameraPermission(this);
         } else {
             init();
         }
@@ -102,7 +104,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             init();
         } else {
             initPermission();
@@ -145,6 +147,18 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
             public void run() {
                 KLog.i(TAG, Thread.currentThread().getName());
                 mCameraGLSurface.setCameraData(yData, uvData);
+            }
+        });
+    }
+
+    @Override
+    public void setCameraDataListener(final ByteBuffer yData, final ByteBuffer uData, final ByteBuffer vData, float timestamp, int imageFormat) {
+        KLog.v(TAG, Thread.currentThread().getName());
+        mCameraGLSurface.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                KLog.i(TAG, Thread.currentThread().getName());
+                mCameraGLSurface.setCameraData(yData, uData, vData);
             }
         });
     }

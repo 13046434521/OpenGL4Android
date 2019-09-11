@@ -60,6 +60,8 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         mHeight = height;
         this.isAutoFocus = isAutoFocus;
         mCameraDataListener = cameraDataListener;
+
+        mImageData = new byte[mWidth * mHeight * 2];
     }
 
     public static Size[] getSizes(Context context, String cameraId) {
@@ -225,19 +227,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         }
     }
 
-    public interface CameraDataListener {
-
-        /**
-         * @param imageData
-         * @param timestamp
-         * @param imageFormat
-         * @see android.graphics.ImageFormat
-         */
-        void setCameraDataListener(byte[] imageData, float timestamp, int imageFormat);
-
-        void setCameraDataListener(ByteBuffer yData, ByteBuffer uvData, float timestamp, int imageFormat);
-    }
-
     @Override
     public void onImageAvailable(ImageReader reader) {
         if (reader == null) {
@@ -261,16 +250,32 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
 //        ByteBuffer uvBuffer=ByteBuffer.allocateDirect(mWidth*mHeight/2);
         ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
         ByteBuffer uvBuffer = image.getPlanes()[1].getBuffer();
-
+        ByteBuffer vBuffer = image.getPlanes()[2].getBuffer();
         yBuffer.position(0);
         uvBuffer.position(0);
+        vBuffer.position(0);
 
-        byte[] imageData = new byte[mHeight * mWidth * 3 / 2];
-        yBuffer.get(imageData, 0, yBuffer.limit());
-        uvBuffer.get(imageData, yBuffer.limit(), uvBuffer.limit());
-
-        mCameraDataListener.setCameraDataListener(imageData, image.getTimestamp(), image.getFormat());
+        yBuffer.get(mImageData, 0, yBuffer.limit());
+        uvBuffer.get(mImageData, yBuffer.limit(), uvBuffer.limit());
+        vBuffer.get(mImageData, yBuffer.limit() + uvBuffer.limit(), vBuffer.limit());
+//        mCameraDataListener.setCameraDataListener(mImageData, image.getTimestamp(), image.getFormat());
 //        mCameraDataListener.setCameraDataListener(yBuffer, uvBuffer, image.getTimestamp(), image.getFormat());
+        mCameraDataListener.setCameraDataListener(yBuffer, uvBuffer, vBuffer, image.getTimestamp(), image.getFormat());
         image.close();
+    }
+
+    public interface CameraDataListener {
+
+        /**
+         * @param imageData
+         * @param timestamp
+         * @param imageFormat
+         * @see android.graphics.ImageFormat
+         */
+        void setCameraDataListener(byte[] imageData, float timestamp, int imageFormat);
+
+        void setCameraDataListener(ByteBuffer yData, ByteBuffer uvData, float timestamp, int imageFormat);
+
+        void setCameraDataListener(ByteBuffer yData, ByteBuffer uData, ByteBuffer vData, float timestamp, int imageFormat);
     }
 }

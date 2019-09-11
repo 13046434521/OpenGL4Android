@@ -26,7 +26,7 @@ public class BitmapRender extends BaseRender {
     private static final String TAG = BitmapRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/bitmap_vert.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/bitmap_frag.glsl";
-    private static final String bitmapFile = "model/zhangli.jpg";
+    private static final String bitmapFile = "drawable/nba.jpg";
     private int mProgram;
     private int[] texture = new int[1];
     private int a_Position;
