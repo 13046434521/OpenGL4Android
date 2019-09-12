@@ -72,7 +72,6 @@ public class BitmapActivity extends BaseActivity {
             int columnIndex = c.getColumnIndex(filePathColumns[0]);
             String mImgPath = c.getString(columnIndex);
             showToast(mImgPath);
-
             mBitmapGLSurface.setBitmap(mImgPath);
             c.close();
         }
