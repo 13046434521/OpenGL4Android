@@ -17,7 +17,7 @@ import android.os.HandlerThread;
 import android.util.Size;
 import android.view.Surface;
 
-import com.socks.library.KLog;
+import com.jtl.opengl.Constant;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 
+import static com.jtl.opengl.Constant.CAMERA_TYPE;
+
 /**
  * 作者:jtl
  * 日期:Created in 2019/9/9 21:32
@@ -37,14 +39,15 @@ import androidx.annotation.NonNull;
 public class CameraWrapper implements ImageReader.OnImageAvailableListener {
     private static final String TAG = CameraWrapper.class.getSimpleName();
     private Context mContext;
-    private String mCameraId;
+    private volatile @Constant.CameraType
+    String mCameraId;
     private int mWidth;
     private int mHeight;
     private boolean isAutoFocus;
     private byte[] mImageData = null;
     private CameraDevice mCameraDevice;
     private CameraCaptureSession mCaptureSession;
-    private ImageReader mColorImageReader;
+    private ImageReader mImageReader;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private CameraDataListener mCameraDataListener;
@@ -53,10 +56,10 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
     // 彩色相机打开关闭锁
     private Semaphore mCameraSemaphore = new Semaphore(1);
 
-    private Size mSizes;
-    public CameraWrapper(Context context, String cameraId, int width, int height, boolean isAutoFocus, CameraDataListener cameraDataListener) {
+    private Size[] mSizes;
+
+    public CameraWrapper(Context context, int width, int height, boolean isAutoFocus, CameraDataListener cameraDataListener) {
         mContext = context;
-        mCameraId = cameraId;
         mWidth = width;
         mHeight = height;
         this.isAutoFocus = isAutoFocus;
@@ -81,28 +84,25 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
     }
 
     @SuppressLint("MissingPermission")
-    public void openCamera() {
+    public void openCamera(@Constant.CameraType final String cameraType) {
         startBackgroundThread();
         CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
-            CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(mCameraId);
+            CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(cameraType);
             StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            Size[] sizes = map.getOutputSizes(ImageFormat.YUV_420_888);
-            for (Size size : sizes) {
-                KLog.w(TAG, "size:" + size.toString());
-                mSizes = size;
-            }
+            mSizes = map.getOutputSizes(ImageFormat.YUV_420_888);
 
             if (!mCameraSemaphore.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 return;
             }
 
-            manager.openCamera(mCameraId, new CameraDevice.StateCallback() {
+            manager.openCamera(cameraType, new CameraDevice.StateCallback() {
                 @Override
                 public void onOpened(@NonNull CameraDevice camera) {
                     mCameraSemaphore.release();
                     mCameraDevice = camera;
-                    startPreview();
+                    startPreview(cameraType);
+
                 }
 
                 @Override
@@ -128,16 +128,16 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         }
     }
 
-    private void startPreview() {
-        mColorImageReader = ImageReader.newInstance(mWidth, mHeight, ImageFormat.YUV_420_888, /*maxImages*/2);
-        mColorImageReader.setOnImageAvailableListener(this, mBackgroundHandler);
+    private void startPreview(final String cameraType) {
+        mImageReader = ImageReader.newInstance(mWidth, mHeight, ImageFormat.YUV_420_888, /*maxImages*/2);
+        mImageReader.setOnImageAvailableListener(this, mBackgroundHandler);
         List<Surface> surfaceList = new ArrayList<Surface>();
         try {
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-        Surface imageReaderSurface = mColorImageReader.getSurface();
+        Surface imageReaderSurface = mImageReader.getSurface();
 
         Surface surface = null;
         mPreviewRequestBuilder.addTarget(imageReaderSurface);
@@ -171,7 +171,8 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
 //                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
                                 mPreviewRequest = mPreviewRequestBuilder.build();
                                 mCaptureSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
-
+                                mCameraId = cameraType;
+                                CAMERA_TYPE = mCameraId;
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
                             }
@@ -214,9 +215,9 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                 mCameraDevice.close();
                 mCameraDevice = null;
             }
-            if (null != mColorImageReader) {
-                mColorImageReader.close();
-                mColorImageReader = null;
+            if (null != mImageReader) {
+                mImageReader.close();
+                mImageReader = null;
             }
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock color camera closing.", e);
@@ -244,9 +245,25 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
 
         yBuffer.get(mImageData, 0, yBuffer.limit());
         uvBuffer.get(mImageData, yBuffer.limit(), uvBuffer.limit());
-        mCameraDataListener.setCameraDataListener(mImageData, image.getTimestamp(), image.getFormat());
+        mCameraDataListener.setCameraDataListener(mCameraId, mImageData, image.getTimestamp(), image.getFormat());
 
         image.close();
+    }
+
+    public @Constant.CameraType
+    String getCameraId() {
+        return mCameraId;
+    }
+
+    public Size[] getSizes() {
+        return mSizes;
+    }
+
+    public byte[] getImageData() {
+        byte[] data = new byte[mImageData.length];
+        System.arraycopy(mImageData, 0, data, 0, data.length);
+
+        return data;
     }
 
     public interface CameraDataListener {
@@ -257,6 +274,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
          * @param imageFormat
          * @see android.graphics.ImageFormat
          */
-        void setCameraDataListener(byte[] imageData, float timestamp, int imageFormat);
+        void setCameraDataListener(@Constant.CameraType String mCameraId, byte[] imageData, float timestamp, int imageFormat);
     }
 }

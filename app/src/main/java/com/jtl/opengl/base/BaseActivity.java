@@ -13,7 +13,7 @@ import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
     protected Toolbar mToolbar;
     private FrameLayout mFrameLayout;
     protected Point mPoint;
@@ -35,12 +35,23 @@ public class BaseActivity extends AppCompatActivity {
         mFrameLayout.addView(view);
     }
 
-    protected void showToast(final String text) {
+    public void showToast(final String text) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(BaseActivity.this, text, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void addOnClickListener(View... views) {
+        for (View view : views) {
+            view.setOnClickListener(this);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

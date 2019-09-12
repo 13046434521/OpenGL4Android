@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.StringDef;
 
 /**
  * 作者:jtl
@@ -34,6 +35,17 @@ public class Constant {
     @Target({ElementType.PARAMETER, ElementType.FIELD})
     @IntDef({RGB, YUV420P_NV12, YUV420P_NV21, YUV420SP_YU12, YUV420SP_YV12, YUV_Y})
     public @interface CameraData {
+    }
+
+    public static final String CAMERA_BACK = "0";
+    public static final String CAMERA_FRONT = "1";
+    public static @CameraType
+    String CAMERA_TYPE = CAMERA_BACK;
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+    @StringDef({CAMERA_BACK, CAMERA_FRONT})
+    public @interface CameraType {
     }
 
 //    public static final int WIDTH=1920;

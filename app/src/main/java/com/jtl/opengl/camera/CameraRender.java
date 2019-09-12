@@ -14,13 +14,13 @@ import java.nio.FloatBuffer;
 /**
  * 作者:jtl
  * 日期:Created in 2019/9/9 19:45
- * 描述:
+ * 描述:渲染YUV_420SP NV12数据，排列顺序为,4个Y公用一个UV分量 YYYYYYYYUVUV
  * 更改:
  */
-public class CameraRender extends BaseRender implements ICamera {
+public class CameraRender extends BaseRender implements ICameraYUV {
     private static final String TAG = CameraRender.class.getSimpleName();
-    private static final String VERTEX_SHADER_NAME = "shader/yuv420_vert.glsl";
-    private static final String FRAGMENT_SHADER_NAME = "shader/yuv420_frag.glsl";
+    private static final String VERTEX_SHADER_NAME = "shader/yuv420_nv12_vert.glsl";
+    private static final String FRAGMENT_SHADER_NAME = "shader/yuv420_nv12_frag.glsl";
     //纹理坐标
     private float[] textureCoord = new float[]{
             0.0f, 0.0f,
@@ -53,8 +53,8 @@ public class CameraRender extends BaseRender implements ICamera {
     @Override
     protected void createdGLThread(Context context) {
         initProgram(context);
-        initData(context);
-        initTexture(context);
+        initData();
+        initTexture();
     }
 
     private void initProgram(Context context) {
@@ -83,7 +83,7 @@ public class CameraRender extends BaseRender implements ICamera {
         ShaderHelper.checkGLError("initProgram");
     }
 
-    private void initData(Context context) {
+    private void initData() {
         ByteBuffer vertexBuffer = ByteBuffer.allocateDirect(vertexCoord.length * 4);
         vertexBuffer.order(ByteOrder.nativeOrder());
         mVertexCoord = vertexBuffer.asFloatBuffer();
@@ -97,7 +97,7 @@ public class CameraRender extends BaseRender implements ICamera {
         Matrix.setIdentityM(mMVPMatrix, 0);
     }
 
-    private void initTexture(Context context) {
+    private void initTexture() {
         GLES20.glGenTextures(3, texture, 0);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
@@ -124,8 +124,8 @@ public class CameraRender extends BaseRender implements ICamera {
     protected void onSurfaceChanged(float width, float height) {
         this.width = (int) width;
         this.height = (int) height;
-        Matrix.setIdentityM(mMVPMatrix, 0);
-        Matrix.setRotateM(mMVPMatrix, 0, -90, 0, 0, 1);
+
+        setRotate(rotate);
     }
 
     @Override
@@ -135,7 +135,6 @@ public class CameraRender extends BaseRender implements ICamera {
 
     @Override
     protected void onDraw() {
-
     }
 
     @Override
@@ -166,5 +165,11 @@ public class CameraRender extends BaseRender implements ICamera {
         GLES20.glUseProgram(0);
 
         ShaderHelper.checkGLError("onDraw");
+    }
+
+    @Override
+    public void setRotate(int rotate) {
+        Matrix.setIdentityM(mMVPMatrix, 0);
+        Matrix.setRotateM(mMVPMatrix, 0, rotate, 0, 0, 1);
     }
 }

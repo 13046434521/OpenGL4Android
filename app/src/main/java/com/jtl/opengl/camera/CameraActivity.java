@@ -2,10 +2,12 @@ package com.jtl.opengl.camera;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.jtl.opengl.Constant;
 import com.jtl.opengl.R;
@@ -20,10 +22,15 @@ import static com.jtl.opengl.Constant.WIDTH;
 
 public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemClickListener, CameraWrapper.CameraDataListener {
     private static final String TAG = CameraActivity.class.getSimpleName();
-    private CameraManager mCameraManager;
     private CameraGLSurface mCameraGLSurface;
-    private String mCameraId;
+    private ImageView mCameraSwitchImg;
+    private ImageView mCameraImg;
+
     private CameraWrapper mCameraWrapper;
+    private CameraPresenter<CameraActivity> mCameraPresenter;
+
+    private @Constant.CameraType
+    String mCameraID = Constant.CAMERA_BACK;
     private int width = WIDTH;
     private int height = HEIGHT;
 
@@ -31,28 +38,37 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView1(R.layout.activity_camera);
-        mCameraGLSurface = findViewById(R.id.gl_camera_surface);
 
+        initView();
+        initPermission();
+    }
+
+    private void initView() {
+        mCameraGLSurface = findViewById(R.id.gl_camera_surface);
+        mCameraImg = findViewById(R.id.iv_camera_btn);
+        mCameraSwitchImg = findViewById(R.id.iv_camera_switch);
+
+        addOnClickListener(mCameraImg, mCameraSwitchImg);
         mToolbar.setTitle(R.string.activity_camera);
         mToolbar.inflateMenu(R.menu.camera_menu);
         mToolbar.setOnMenuItemClickListener(this);
-        initPermission();
     }
 
     //获取权限
     private void initPermission() {
         if (!PermissionHelper.hasCameraPermission(this) || !PermissionHelper.hasStoragePermission(this)) {
             PermissionHelper.requestPermission(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-//            PermissionHelper.requestCameraPermission(this);
         } else {
             init();
         }
     }
 
     private void init() {
+        mCameraPresenter = new CameraPresenter<>(this);
+
         if (mCameraWrapper == null) {
-            mCameraWrapper = new CameraWrapper(this, "0", width, height, true, this);
-            mCameraWrapper.openCamera();
+            mCameraWrapper = new CameraWrapper(this, width, height, true, this);
+            mCameraWrapper.openCamera(mCameraID);
         }
 
         initMenu();
@@ -70,7 +86,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
         super.onResume();
 
         if (mCameraWrapper != null) {
-            mCameraWrapper.openCamera();
+            mCameraWrapper.openCamera(Constant.CAMERA_BACK);
         }
         if (mCameraGLSurface != null) {
             mCameraGLSurface.onResume();
@@ -118,12 +134,27 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
     }
 
     @Override
-    public void setCameraDataListener(final byte[] imageData, float timestamp, int imageFormat) {
+    public void setCameraDataListener(@Constant.CameraType final String cameraID, final byte[] imageData, float timestamp, int imageFormat) {
         mCameraGLSurface.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mCameraGLSurface.setCameraData(imageData);
+                mCameraGLSurface.setCameraData(cameraID, imageData);
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_camera_btn:
+                mCameraPresenter.takePhoto(mCameraWrapper.getImageData());
+                break;
+            case R.id.iv_camera_switch:
+                mCameraPresenter.switchCamera(mCameraWrapper);
+                break;
+            default:
+                Toast.makeText(this, "其他", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }

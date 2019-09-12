@@ -12,6 +12,7 @@ import java.nio.ByteOrder;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static com.jtl.opengl.Constant.CAMERA_BACK;
 import static com.jtl.opengl.Constant.YUV420P_NV12;
 import static com.jtl.opengl.Constant.YUV_Y;
 
@@ -32,6 +33,9 @@ public class CameraGLSurface extends BaseGLSurface {
     private CameraYRender mCameraYRender;
     private @Constant.CameraData
     int mCameraType = YUV420P_NV12;
+
+    private @Constant.CameraType
+    String mCameraId = CAMERA_BACK;
     public CameraGLSurface(Context context) {
         super(context);
     }
@@ -77,14 +81,18 @@ public class CameraGLSurface extends BaseGLSurface {
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
         if (mCameraType == YUV420P_NV12) {
+            mCameraRender.setRotate(mCameraId.equals(CAMERA_BACK) ? -90 : 90);
             mCameraRender.onDraw(mYBuffer, mUVBuffer);
         } else if (mCameraType == YUV_Y) {
+            mCameraYRender.setRotate(mCameraId.equals(CAMERA_BACK) ? -90 : 90);
             mCameraYRender.onDraw(mYBuffer, mUVBuffer);
         }
     }
 
-    public void setCameraData(byte[] data) {
+    public void setCameraData(@Constant.CameraType String cameraId, byte[] data) {
         if (data != null && data.length > 0) {
+            mCameraId = cameraId;
+
             System.arraycopy(data, 0, mYData, 0, mYData.length);
             System.arraycopy(data, mYData.length, mUVData, 0, mUVData.length);
 //            FileHelper.getInstance().createFileWithByte(data, FileHelper.getInstance().getDataFolderPath(),System.currentTimeMillis()+"y_uv.yuv");

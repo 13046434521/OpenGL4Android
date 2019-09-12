@@ -14,10 +14,10 @@ import java.nio.FloatBuffer;
 /**
  * 作者:jtl
  * 日期:Created in 2019/9/9 19:45
- * 描述:
+ * 描述:渲染YUV的Y分量
  * 更改:
  */
-public class CameraYRender extends BaseRender implements ICamera {
+public class CameraYRender extends BaseRender implements ICameraYUV {
     private static final String TAG = CameraYRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/yuv_y_vert.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/yuv_y_frag.glsl";
@@ -52,8 +52,8 @@ public class CameraYRender extends BaseRender implements ICamera {
     @Override
     protected void createdGLThread(Context context) {
         initProgram(context);
-        initData(context);
-        initTexture(context);
+        initData();
+        initTexture();
     }
 
     private void initProgram(Context context) {
@@ -80,7 +80,7 @@ public class CameraYRender extends BaseRender implements ICamera {
         ShaderHelper.checkGLError("initProgram");
     }
 
-    private void initData(Context context) {
+    private void initData() {
         ByteBuffer textureBuffer = ByteBuffer.allocateDirect(textureCoord.length * 4);
         textureBuffer.order(ByteOrder.nativeOrder());
         mTextureCoord = textureBuffer.asFloatBuffer();
@@ -92,7 +92,7 @@ public class CameraYRender extends BaseRender implements ICamera {
         mVertexCoord.put(vertexCoord).position(0);
     }
 
-    private void initTexture(Context context) {
+    private void initTexture() {
         GLES20.glGenTextures(1, texture, 0);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
@@ -112,7 +112,7 @@ public class CameraYRender extends BaseRender implements ICamera {
         this.width = (int) width;
         this.height = (int) height;
 
-        Matrix.setRotateM(mMVPMatrix, 0, -90, 0, 0, 1);
+        setRotate(rotate);
     }
 
     @Override
@@ -148,5 +148,11 @@ public class CameraYRender extends BaseRender implements ICamera {
         GLES20.glUseProgram(0);
 
         ShaderHelper.checkGLError("onDraw");
+    }
+
+    @Override
+    public void setRotate(int rotate) {
+        Matrix.setIdentityM(mMVPMatrix, 0);
+        Matrix.setRotateM(mMVPMatrix, 0, rotate, 0, 0, 1);
     }
 }

@@ -8,6 +8,9 @@ import java.nio.ByteBuffer;
  * 描述:
  * 更改:
  */
-public interface ICamera {
+public interface ICameraYUV {
+    int rotate = -90;
     void onDraw(ByteBuffer yData, ByteBuffer uvData);
+
+    void setRotate(int rotate);
 }
