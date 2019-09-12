@@ -152,6 +152,8 @@ public class BitmapRender extends BaseRender {
     protected void onDraw() {
         GLES20.glUseProgram(mProgram);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mBitmap.getWidth(), mBitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mBitmapBuffer);
+        GLES20.glUniform1i(u_TextureUnit, 0);
 
         GLES20.glUniformMatrix4fv(u_MvpMatrix, 1, false, orthoMatrix, 0);
 
@@ -170,6 +172,17 @@ public class BitmapRender extends BaseRender {
         GLES20.glDisableVertexAttribArray(a_Position);
         GLES20.glDisableVertexAttribArray(a_TexCoord);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+
         ShaderHelper.checkGLError("onDraw");
+    }
+
+    public void setBitmap(String path) {
+        mBitmap = BitmapFactory.decodeFile(path);
+        mBitmapBuffer = ByteBuffer.allocateDirect(mBitmap.getWidth() * mBitmap.getHeight() * 4);
+        mBitmapBuffer.order(ByteOrder.nativeOrder());
+        mBitmap.copyPixelsToBuffer(mBitmapBuffer);
+        mBitmapBuffer.position(0);
+
+        mBitmap.recycle();
     }
 }

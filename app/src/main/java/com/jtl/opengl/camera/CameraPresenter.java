@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 import com.jtl.opengl.Constant;
+import com.jtl.opengl.base.BasePresenter;
 import com.jtl.opengl.helper.FileHelper;
 import com.socks.library.KLog;
 
@@ -21,7 +22,7 @@ import static com.jtl.opengl.Constant.WIDTH;
  * 描述:
  * 更改:
  */
-public class CameraPresenter<T> implements IPresenter {
+public class CameraPresenter<T> extends BasePresenter implements ICameraPresenter {
     private T t;
 
     public CameraPresenter(T t) {

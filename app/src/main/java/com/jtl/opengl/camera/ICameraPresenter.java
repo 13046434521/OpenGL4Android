@@ -6,5 +6,5 @@ package com.jtl.opengl.camera;
  * 描述:
  * 更改:
  */
-public interface IPresenter {
+public interface ICameraPresenter {
 }
