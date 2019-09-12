@@ -242,7 +242,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         yBuffer.position(0);
         uvBuffer.position(0);
 
-
         yBuffer.get(mImageData, 0, yBuffer.limit());
         uvBuffer.get(mImageData, yBuffer.limit(), uvBuffer.limit());
         mCameraDataListener.setCameraDataListener(mImageData, image.getTimestamp(), image.getFormat());

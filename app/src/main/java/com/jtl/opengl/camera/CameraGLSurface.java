@@ -12,6 +12,9 @@ import java.nio.ByteOrder;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static com.jtl.opengl.Constant.YUV420P_NV12;
+import static com.jtl.opengl.Constant.YUV_Y;
+
 /**
  * 作者:jtl
  * 日期:Created in 2019/9/9 19:44
@@ -25,9 +28,10 @@ public class CameraGLSurface extends BaseGLSurface {
     private int height = Constant.HEIGHT;
     private ByteBuffer mYBuffer;
     private ByteBuffer mUVBuffer;
-    private BackGroundNV12RenderNew mBackGroundNV12RenderNew;
     private CameraRender mCameraRender;
     private CameraYRender mCameraYRender;
+    private @Constant.CameraData
+    int mCameraType = YUV420P_NV12;
     public CameraGLSurface(Context context) {
         super(context);
     }
@@ -52,8 +56,6 @@ public class CameraGLSurface extends BaseGLSurface {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
-        mBackGroundNV12RenderNew = new BackGroundNV12RenderNew();
-        mBackGroundNV12RenderNew.createOnGLThread(getContext().getApplicationContext());
 
         mCameraRender = new CameraRender();
         mCameraRender.createdGLThread(getContext().getApplicationContext());
@@ -74,9 +76,11 @@ public class CameraGLSurface extends BaseGLSurface {
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
-//        mBackGroundNV12RenderNew.drawFrame(mYBuffer, mUVBuffer, width, height);
-//        mCameraYRender.onDraw(mYBuffer, mUVBuffer);
-        mCameraRender.onDraw(mYBuffer, mUVBuffer);
+        if (mCameraType == YUV420P_NV12) {
+            mCameraRender.onDraw(mYBuffer, mUVBuffer);
+        } else if (mCameraType == YUV_Y) {
+            mCameraYRender.onDraw(mYBuffer, mUVBuffer);
+        }
     }
 
     public void setCameraData(byte[] data) {
@@ -88,5 +92,9 @@ public class CameraGLSurface extends BaseGLSurface {
             mYBuffer.put(mYData).position(0);
             mUVBuffer.put(mUVData).position(0);
         }
+    }
+
+    public void setCameraDataType(@Constant.CameraData int cameraDataType) {
+        this.mCameraType = cameraDataType;
     }
 }

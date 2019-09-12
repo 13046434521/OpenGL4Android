@@ -28,6 +28,13 @@ public class Constant {
     public static final int YUV420P_NV21 = 2; //YUV420P: NV21:安卓的模式。存储顺序是先存Y，再存U，再VU交替存储。YYYYVUVUVU
     public static final int YUV420SP_YU12 = 3;//YUV420SP: I420:又叫YU12，安卓的模式。存储顺序是先存Y，再存U，最后存V。YYYYUUUVVV
     public static final int YUV420SP_YV12 = 4;//YUV420SP: YV12:存储顺序是先存Y，再存V，最后存U。YYYVVVUUU
+    public static final int YUV_Y = 5;//YUV: Y分量
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.PARAMETER, ElementType.FIELD})
+    @IntDef({RGB, YUV420P_NV12, YUV420P_NV21, YUV420SP_YU12, YUV420SP_YV12, YUV_Y})
+    public @interface CameraData {
+    }
 
 //    public static final int WIDTH=1920;
 //    public static final int HEIGHT=1080;

@@ -1,15 +1,13 @@
 package com.jtl.opengl.camera;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
-import android.util.Size;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.jtl.opengl.Constant;
 import com.jtl.opengl.R;
 import com.jtl.opengl.base.BaseActivity;
 import com.jtl.opengl.helper.PermissionHelper;
@@ -52,21 +50,18 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
     }
 
     private void init() {
-        try {
-            mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            for (String cameraId : mCameraManager.getCameraIdList()) {
-                Menu menu = mToolbar.getMenu();
-                menu.add(cameraId);
-                mCameraId = cameraId;
-            }
-
-//            if (mCameraWrapper == null) {
-//                mCameraWrapper = new CameraWrapper(this, mCameraId, width, height, true, this);
-//                mCameraWrapper.openCamera();
-//            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+        if (mCameraWrapper == null) {
+            mCameraWrapper = new CameraWrapper(this, "0", width, height, true, this);
+            mCameraWrapper.openCamera();
         }
+
+        initMenu();
+    }
+
+    private void initMenu() {
+        Menu menu = mToolbar.getMenu();
+        menu.add("NV12");
+        menu.add("YUV_Y");
     }
 
 
@@ -106,24 +101,19 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        String title = (String) item.getTitle();
-//        switch (title){
-//            case "0":
-//                showToast("后置");
-//                break;
-//            case "1":
-//                showToast("前置");
-//                break;
-//        }
-        if (mCameraWrapper == null) {
-            mCameraWrapper = new CameraWrapper(this, title, width, height, true, this);
-            mCameraWrapper.openCamera();
-
-            for (Size size : CameraWrapper.getSizes(this, title)) {
-                Menu menu = mToolbar.getMenu();
-                menu.add(size.getWidth() + "x" + size.getHeight());
+        if (mCameraGLSurface != null) {
+            int type = Constant.YUV420P_NV12;
+            switch (item.getTitle().toString()) {
+                case "YUV_Y":
+                    type = Constant.YUV_Y;
+                    break;
+                case "NV12":
+                    type = Constant.YUV420P_NV12;
+                    break;
             }
+            mCameraGLSurface.setCameraDataType(type);
         }
+
         return true;
     }
 
