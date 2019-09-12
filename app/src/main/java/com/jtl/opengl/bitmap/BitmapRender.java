@@ -79,26 +79,6 @@ public class BitmapRender extends BaseRender {
             Matrix.orthoM(orthoMatrix, 0, -1f, 1f, -ratio, ratio, -1f, 1f);
         }
 
-        // TODO: 2019/9/13  
-        if (width > height) {
-            if (mBitmap.getWidth() > mBitmap.getHeight()) {
-
-            } else {
-
-            }
-        } else {
-            if (mBitmap.getWidth() > mBitmap.getHeight()) {
-                float mwidth = width * mBitmap.getHeight() / height;
-                ratio = mwidth / mBitmap.getHeight();
-            } else {
-                float mheight = width * mBitmap.getHeight() / height;
-//                ratio=mwidth/mBitmap.getHeight();
-            }
-            Matrix.orthoM(orthoMatrix, 0, -1f, 1f, -ratio, ratio, -1f, 1f);
-        }
-        
-        
-
         KLog.w(TAG, "height:" + height + " width:" + width + " " + Arrays.toString(orthoMatrix));
     }
 
