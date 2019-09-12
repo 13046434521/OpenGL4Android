@@ -13,9 +13,6 @@ import android.view.MenuItem;
 import com.jtl.opengl.R;
 import com.jtl.opengl.base.BaseActivity;
 import com.jtl.opengl.helper.PermissionHelper;
-import com.socks.library.KLog;
-
-import java.nio.ByteBuffer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -61,10 +58,6 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
                 Menu menu = mToolbar.getMenu();
                 menu.add(cameraId);
                 mCameraId = cameraId;
-            }
-            for (Size size : CameraWrapper.getSizes(this, mCameraId)) {
-                Menu menu = mToolbar.getMenu();
-                menu.add(size.getWidth() + "x" + size.getHeight());
             }
 
 //            if (mCameraWrapper == null) {
@@ -125,6 +118,11 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
         if (mCameraWrapper == null) {
             mCameraWrapper = new CameraWrapper(this, title, width, height, true, this);
             mCameraWrapper.openCamera();
+
+            for (Size size : CameraWrapper.getSizes(this, title)) {
+                Menu menu = mToolbar.getMenu();
+                menu.add(size.getWidth() + "x" + size.getHeight());
+            }
         }
         return true;
     }
@@ -135,30 +133,6 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
             @Override
             public void run() {
                 mCameraGLSurface.setCameraData(imageData);
-            }
-        });
-    }
-
-    @Override
-    public void setCameraDataListener(final ByteBuffer yData, final ByteBuffer uvData, float timestamp, int imageFormat) {
-        KLog.v(TAG, Thread.currentThread().getName());
-        mCameraGLSurface.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                KLog.i(TAG, Thread.currentThread().getName());
-                mCameraGLSurface.setCameraData(yData, uvData);
-            }
-        });
-    }
-
-    @Override
-    public void setCameraDataListener(final ByteBuffer yData, final ByteBuffer uData, final ByteBuffer vData, float timestamp, int imageFormat) {
-        KLog.v(TAG, Thread.currentThread().getName());
-        mCameraGLSurface.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                KLog.i(TAG, Thread.currentThread().getName());
-                mCameraGLSurface.setCameraData(yData, uData, vData);
             }
         });
     }

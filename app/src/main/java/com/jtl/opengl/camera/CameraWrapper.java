@@ -52,6 +52,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
     private Handler mBackgroundHandler;
     // 彩色相机打开关闭锁
     private Semaphore mCameraSemaphore = new Semaphore(1);
+
     private Size mSizes;
     public CameraWrapper(Context context, String cameraId, int width, int height, boolean isAutoFocus, CameraDataListener cameraDataListener) {
         mContext = context;
@@ -61,7 +62,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         this.isAutoFocus = isAutoFocus;
         mCameraDataListener = cameraDataListener;
 
-        mImageData = new byte[mWidth * mHeight * 2];
+        mImageData = new byte[mWidth * mHeight * 3 / 2];
     }
 
     public static Size[] getSizes(Context context, String cameraId) {
@@ -221,7 +222,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
             throw new RuntimeException("Interrupted while trying to lock color camera closing.", e);
         } finally {
             mCameraSemaphore.release();
-            mImageData = null;
 
             stopBackgroundThread();
         }
@@ -237,30 +237,16 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
             return;
         }
 
-        int y = image.getPlanes()[0].getBuffer().remaining();
-        int u = image.getPlanes()[1].getBuffer().remaining();
-        int v = image.getPlanes()[2].getBuffer().remaining();
-
-        KLog.w(TAG, image.getWidth() + "---" + image.getHeight() + "  Y:" + y);
-        KLog.v(TAG, image.getWidth() + "---" + image.getHeight() + "  U:" + u);
-        KLog.d(TAG, image.getWidth() + "---" + image.getHeight() + "  V:" + v);
-//        ByteBuffer yBuffer=ByteBuffer.allocateDirect(mWidth*mHeight);
-//        yBuffer.order(ByteOrder.nativeOrder());
-//        yBuffer.put( image.getPlanes()[0].getBuffer(),0);
-//        ByteBuffer uvBuffer=ByteBuffer.allocateDirect(mWidth*mHeight/2);
         ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
         ByteBuffer uvBuffer = image.getPlanes()[1].getBuffer();
-        ByteBuffer vBuffer = image.getPlanes()[2].getBuffer();
         yBuffer.position(0);
         uvBuffer.position(0);
-        vBuffer.position(0);
+
 
         yBuffer.get(mImageData, 0, yBuffer.limit());
         uvBuffer.get(mImageData, yBuffer.limit(), uvBuffer.limit());
-        vBuffer.get(mImageData, yBuffer.limit() + uvBuffer.limit(), vBuffer.limit());
-//        mCameraDataListener.setCameraDataListener(mImageData, image.getTimestamp(), image.getFormat());
-//        mCameraDataListener.setCameraDataListener(yBuffer, uvBuffer, image.getTimestamp(), image.getFormat());
-        mCameraDataListener.setCameraDataListener(yBuffer, uvBuffer, vBuffer, image.getTimestamp(), image.getFormat());
+        mCameraDataListener.setCameraDataListener(mImageData, image.getTimestamp(), image.getFormat());
+
         image.close();
     }
 
@@ -273,9 +259,5 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
          * @see android.graphics.ImageFormat
          */
         void setCameraDataListener(byte[] imageData, float timestamp, int imageFormat);
-
-        void setCameraDataListener(ByteBuffer yData, ByteBuffer uvData, float timestamp, int imageFormat);
-
-        void setCameraDataListener(ByteBuffer yData, ByteBuffer uData, ByteBuffer vData, float timestamp, int imageFormat);
     }
 }

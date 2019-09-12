@@ -9,5 +9,5 @@ import java.nio.ByteBuffer;
  * 更改:
  */
 public interface ICamera {
-    void onDraw(ByteBuffer yData, ByteBuffer uData, ByteBuffer vData);
+    void onDraw(ByteBuffer yData, ByteBuffer uvData);
 }
