@@ -68,7 +68,7 @@ public class BitmapRender extends BaseRender {
     @Override
     protected void onSurfaceChanged(float width, float height) {
         float ratio = width > height ? width / height : height / width;
-
+        Matrix.setIdentityM(orthoMatrix, 0);
         if (width > height) {
             //landscape 横屏 width:2340 > height:856  orthoMatrix:[0.36581194, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.0, -0.0, -0.0, 1.0]
             // 把每个点的x值缩小了
@@ -78,6 +78,26 @@ public class BitmapRender extends BaseRender {
             // 把每个点的y值缩小了
             Matrix.orthoM(orthoMatrix, 0, -1f, 1f, -ratio, ratio, -1f, 1f);
         }
+
+        // TODO: 2019/9/13  
+        if (width > height) {
+            if (mBitmap.getWidth() > mBitmap.getHeight()) {
+
+            } else {
+
+            }
+        } else {
+            if (mBitmap.getWidth() > mBitmap.getHeight()) {
+                float mwidth = width * mBitmap.getHeight() / height;
+                ratio = mwidth / mBitmap.getHeight();
+            } else {
+                float mheight = width * mBitmap.getHeight() / height;
+//                ratio=mwidth/mBitmap.getHeight();
+            }
+            Matrix.orthoM(orthoMatrix, 0, -1f, 1f, -ratio, ratio, -1f, 1f);
+        }
+        
+        
 
         KLog.w(TAG, "height:" + height + " width:" + width + " " + Arrays.toString(orthoMatrix));
     }
