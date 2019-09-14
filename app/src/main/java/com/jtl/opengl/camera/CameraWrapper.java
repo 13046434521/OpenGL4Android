@@ -86,6 +86,9 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
 
     @SuppressLint("MissingPermission")
     public void openCamera(@Constant.CameraType final String cameraType) {
+        if (mCameraDevice != null) {
+            closeCamera();
+        }
         startBackgroundThread();
         CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -100,23 +103,25 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
             manager.openCamera(cameraType, new CameraDevice.StateCallback() {
                 @Override
                 public void onOpened(@NonNull CameraDevice camera) {
-                    mCameraSemaphore.release();
                     mCameraDevice = camera;
                     startPreview(cameraType);
+
+                    KLog.e(TAG, "onOpened");
                 }
 
                 @Override
                 public void onDisconnected(@NonNull CameraDevice camera) {
-                    mCameraSemaphore.release();
                     camera.close();
                     mCameraDevice = null;
+                    mCameraSemaphore.release();
+                    KLog.e(TAG, "onDisconnected");
                 }
 
                 @Override
                 public void onError(@NonNull CameraDevice camera, int error) {
-                    mCameraSemaphore.release();
                     camera.close();
                     mCameraDevice = null;
+                    mCameraSemaphore.release();
                     KLog.e(TAG, "onError:error:" + error);
                 }
             }, mBackgroundHandler);
@@ -135,21 +140,18 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         List<Surface> surfaceList = new ArrayList<Surface>();
         try {
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        Surface imageReaderSurface = mImageReader.getSurface();
 
-        Surface surface = null;
-        mPreviewRequestBuilder.addTarget(imageReaderSurface);
+            Surface imageReaderSurface = mImageReader.getSurface();
 
-        if (surface == null) {
-            surfaceList = Arrays.asList(imageReaderSurface);
-        } else {
-            surfaceList = Arrays.asList(surface, imageReaderSurface);
-        }
+            Surface surface = null;
+            mPreviewRequestBuilder.addTarget(imageReaderSurface);
 
-        try {
+            if (surface == null) {
+                surfaceList = Arrays.asList(imageReaderSurface);
+            } else {
+                surfaceList = Arrays.asList(surface, imageReaderSurface);
+            }
+
             mCameraDevice.createCaptureSession(surfaceList,
                     new CameraCaptureSession.StateCallback() {
 
@@ -174,6 +176,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                                 mCaptureSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
                                 mCameraId = cameraType;
                                 CAMERA_TYPE = mCameraId;
+                                mCameraSemaphore.release();
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
                                 KLog.e(TAG, "onError:CameraAccessException:" + e.getMessage());
@@ -183,6 +186,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                         @Override
                         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                             KLog.e(TAG, "onConfigureFailed");
+                            mCameraSemaphore.release();
                         }
                     }, mBackgroundHandler);
         } catch (CameraAccessException e) {
@@ -195,6 +199,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+        KLog.e(TAG, "startBackgroundThread");
     }
 
     private void stopBackgroundThread() {
@@ -203,6 +208,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
             mBackgroundThread.join();
             mBackgroundThread = null;
             mBackgroundHandler = null;
+            KLog.e(TAG, "stopBackgroundThread");
         } catch (InterruptedException e) {
             e.printStackTrace();
             KLog.e(TAG, "onError:InterruptedException:" + e.getMessage());
@@ -227,9 +233,9 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock color camera closing.", e);
         } finally {
-            mCameraSemaphore.release();
-
             stopBackgroundThread();
+            mCameraSemaphore.release();
+            KLog.e(TAG, "closeCamera");
         }
     }
 
@@ -253,6 +259,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
         mCameraDataListener.setCameraDataListener(mCameraId, mImageData, image.getTimestamp(), image.getFormat());
 
         image.close();
+        KLog.w(TAG, "onImageAvailable");
     }
 
     public @Constant.CameraType
