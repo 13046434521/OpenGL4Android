@@ -152,7 +152,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
                 mCameraPresenter.switchCamera(mCameraWrapper);
                 break;
             default:
-                Toast.makeText(this, "其他", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "测试", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
