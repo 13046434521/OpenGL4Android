@@ -54,4 +54,8 @@ public class BitmapGLSurface extends BaseGLSurface {
     public void onResume() {
         super.onResume();
     }
+
+    public void setBitmap(String path) {
+        mBitmapRender.setBitmap(path);
+    }
 }

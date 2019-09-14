@@ -18,6 +18,7 @@ import android.util.Size;
 import android.view.Surface;
 
 import com.jtl.opengl.Constant;
+import com.socks.library.KLog;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -102,7 +103,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                     mCameraSemaphore.release();
                     mCameraDevice = camera;
                     startPreview(cameraType);
-
                 }
 
                 @Override
@@ -117,14 +117,17 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                     mCameraSemaphore.release();
                     camera.close();
                     mCameraDevice = null;
+                    KLog.e(TAG, "onError:error:" + error);
                 }
             }, mBackgroundHandler);
 
 
         } catch (InterruptedException e) {
             e.printStackTrace();
+            KLog.e(TAG, "onError:InterruptedException:" + e.getMessage());
         } catch (CameraAccessException e) {
             e.printStackTrace();
+            KLog.e(TAG, "onError:CameraAccessException:" + e.getMessage());
         }
     }
 
@@ -175,15 +178,18 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                                 CAMERA_TYPE = mCameraId;
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
+                                KLog.e(TAG, "onError:CameraAccessException:" + e.getMessage());
                             }
                         }
 
                         @Override
                         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+                            KLog.e(TAG, "onConfigureFailed");
                         }
                     }, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
+            KLog.e(TAG, "onError:CameraAccessException:" + e.getMessage());
         }
     }
 
@@ -201,6 +207,7 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
             mBackgroundHandler = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            KLog.e(TAG, "onError:InterruptedException:" + e.getMessage());
         }
     }
 

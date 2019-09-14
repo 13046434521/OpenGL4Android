@@ -68,7 +68,6 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
 
         if (mCameraWrapper == null) {
             mCameraWrapper = new CameraWrapper(this, width, height, true, this);
-            mCameraWrapper.openCamera(mCameraID);
         }
 
         initMenu();
