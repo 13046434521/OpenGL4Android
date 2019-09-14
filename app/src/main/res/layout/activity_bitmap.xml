@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".bitmap.BitmapActivity">
 
+    <com.jtl.opengl.bitmap.BitmapGLSurface
+        android:id="@+id/gl_bitmap_surface"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/iv_bitmap_preview"
         android:layout_width="wrap_content"
@@ -15,13 +24,4 @@
         android:src="@drawable/ic_all_photo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <com.jtl.opengl.bitmap.BitmapGLSurface
-        android:id="@+id/gl_bitmap_surface"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

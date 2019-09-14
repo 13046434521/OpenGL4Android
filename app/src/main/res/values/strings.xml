@@ -4,6 +4,7 @@
     <string name="activity_bitmap">Bitmap</string>
     <string name="activity_skybox">天空盒</string>
     <string name="activity_camera">Camera</string>
+    <string name="activity_model">模型</string>
     <string name="triangle">三角形</string>
     <string name="cube">立方体</string>
 </resources>

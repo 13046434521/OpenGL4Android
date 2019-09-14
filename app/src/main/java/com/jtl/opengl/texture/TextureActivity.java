@@ -12,6 +12,6 @@ public class TextureActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView1(R.layout.activity_texture);
 
-        mToolbar.setTitle(R.string.activity_camera);
+        mToolbar.setTitle(R.string.activity_model);
     }
 }
