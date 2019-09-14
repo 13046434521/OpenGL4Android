@@ -120,8 +120,6 @@ public class CameraWrapper implements ImageReader.OnImageAvailableListener {
                     KLog.e(TAG, "onError:error:" + error);
                 }
             }, mBackgroundHandler);
-
-
         } catch (InterruptedException e) {
             e.printStackTrace();
             KLog.e(TAG, "onError:InterruptedException:" + e.getMessage());
