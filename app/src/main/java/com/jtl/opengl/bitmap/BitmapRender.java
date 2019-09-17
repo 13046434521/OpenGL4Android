@@ -162,8 +162,8 @@ public class BitmapRender extends BaseRender {
 
         //public static void glVertexAttribPointer(插槽位置,有几个分量（x,y,z,w）,数据类型,是否归一化,0,数据)
         //告诉GPU如何遍历VBO的内存块
-        GLES20.glVertexAttribPointer(a_Position, 2, GLES20.GL_FLOAT, true, 0, mVertexCoord);
-        GLES20.glVertexAttribPointer(a_TexCoord, 2, GLES20.GL_FLOAT, true, 0, mTextureCoord);
+        GLES20.glVertexAttribPointer(a_Position, 2, GLES20.GL_FLOAT, false, 0, mVertexCoord);
+        GLES20.glVertexAttribPointer(a_TexCoord, 2, GLES20.GL_FLOAT, false, 0, mTextureCoord);
 
         //绘制图元类型，从第几个点开始绘制，绘制多少个点
         //他会遍历，vbo里的数据。并把点分别传入4个shader里，他们的viewMatrix，projectMatrix，是一模一样的

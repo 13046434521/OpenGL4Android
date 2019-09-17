@@ -89,6 +89,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
         }
         if (mCameraGLSurface != null) {
             mCameraGLSurface.onResume();
+            mCameraGLSurface.setAspectRatio(height,width);
         }
     }
 
@@ -150,6 +151,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
                 break;
             case R.id.iv_camera_switch:
                 mCameraPresenter.switchCamera(mCameraWrapper);
+                mCameraGLSurface.setAspectRatio(height,width);
                 break;
             default:
                 Toast.makeText(this, "其他", Toast.LENGTH_SHORT).show();
