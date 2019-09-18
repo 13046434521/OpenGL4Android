@@ -112,8 +112,8 @@ public class ModelHelper {
                         }
                     } else if (contents.length - 1 == 4) {
                         modelObj.setShape(ModelObj.QUADRILATERAL);
-                        int [] index=new int[]{1,2,3,1,4,3};
-                        for (int i=0;i<index.length;i++){
+                        int[] index = new int[]{1, 2, 3, 1, 4, 3};
+                        for (int i = 0; i < index.length; i++) {
                             String[] fs = contents[index[i]].split("/");
                             if (fs.length > 0) {
                                 //v 0.146018 3.220109 2.338209
@@ -162,7 +162,7 @@ public class ModelHelper {
 
     public HashMap<String, ModelMtl> readMtl(Context context, String path) {
         HashMap<String, ModelMtl> modelMtlMap = new HashMap<>();
-        ModelMtl modelMtl = null;
+        ModelMtl modelMtl = new ModelMtl();
         try {
             InputStream inputStream = context.getResources().getAssets().open(path + ".mtl");
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);

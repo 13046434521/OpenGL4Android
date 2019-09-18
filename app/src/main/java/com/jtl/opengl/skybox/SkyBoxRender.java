@@ -31,9 +31,14 @@ public class SkyBoxRender extends BaseRender {
     private static final String TAG = SkyBoxRender.class.getSimpleName();
     private static final String VERTEX_SHADER_NAME = "shader/skybox_vert.glsl";
     private static final String FRAGMENT_SHADER_NAME = "shader/skybox_frag.glsl";
-    private static final String[] bitmapFilePath = new String[]{"drawable/right.jpg", "drawable/left.jpg",
-            "drawable/top.jpg", "drawable/bottom.jpg"
-            , "drawable/back.jpg", "drawable/front.jpg"};
+//    private static final String[] bitmapFilePath = new String[]{"drawable/right.jpg", "drawable/left.jpg",
+//            "drawable/top.jpg", "drawable/bottom.jpg"
+//            , "drawable/back.jpg", "drawable/front.jpg"};
+
+    private static String[] bitmapFilePath = new String[]{"drawable/spruit_sunrise_2k_rt.png", "drawable/spruit_sunrise_2k_lf.png",
+            "drawable/spruit_sunrise_2k_up.png", "drawable/spruit_sunrise_2k_dn.png"
+            , "drawable/spruit_sunrise_2k_fr.png", "drawable/spruit_sunrise_2k_bk.png"};
+
 
     private int mProgram;
     private int[] textureId = new int[1];
@@ -169,6 +174,34 @@ public class SkyBoxRender extends BaseRender {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
         ShaderHelper.checkGLError(TAG, "initTexture");
+    }
+
+    public void upDataBitmap(Context context,String[] bitmapPath){
+        if (bitmapPath!=bitmapFilePath){
+            bitmapFilePath=bitmapPath;
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureId[0]);
+
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            try {
+                for (int i = 0; i < mBitmaps.length; ++i) {
+                    mBitmaps[i] = BitmapFactory.decodeStream(context.getAssets().open(bitmapPath[i]));
+                    GLUtils.texImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, mBitmaps[i], 0);
+
+                    mBitmaps[i].recycle();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            GLES20.glUniform1i(u_TextureUnit, 0);
+
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        }
+
+        ShaderHelper.checkGLError(TAG, "upDataBitmap");
     }
 
     @Override

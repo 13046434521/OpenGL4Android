@@ -28,12 +28,14 @@ public class ModelGLSurface extends BaseGLSurface {
     }
     public ModelGLSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
+//                mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/3D_20190117_1416");
         mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/pikachu");
 //        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/Corona");
 //        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/UmbreonHighPoly");
 //        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/nanosuit");
         mModelRenderList = new ArrayList<>();
         mModelRender1List = new ArrayList<>();
+
         for (int i=0;i<mModelObjList.size();i++){
             ModelRender modelRender=new ModelRender();
             mModelRenderList.add(modelRender);
@@ -47,14 +49,14 @@ public class ModelGLSurface extends BaseGLSurface {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
 
-        for (int i=0;i<mModelRender1List.size();i++){
-            ModelRender1 render=mModelRender1List.get(i);
+        for (int i=0;i<mModelObjList.size();i++){
+            ModelRender render=mModelRenderList.get(i);
             render.createdGLThread(getContext().getApplicationContext());
             render.initModelObj(mModelObjList.get(i),getContext().getApplicationContext());
         }
 
-        for (int i=0;i<mModelObjList.size();i++){
-            ModelRender render=mModelRenderList.get(i);
+        for (int i=0;i<mModelRender1List.size();i++){
+            ModelRender1 render=mModelRender1List.get(i);
             render.createdGLThread(getContext().getApplicationContext());
             render.initModelObj(mModelObjList.get(i),getContext().getApplicationContext());
         }

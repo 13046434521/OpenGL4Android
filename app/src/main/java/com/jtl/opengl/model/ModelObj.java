@@ -42,6 +42,10 @@ public class ModelObj {
     private int textureSize;
     private int normalSize;
 
+    public ModelObj() {
+        mModelMtl=new ModelMtl();
+    }
+
     public void addVert(float vertex) {
         if (mVertexList == null) {
             mVertexList = new ArrayList<>();

@@ -36,7 +36,7 @@ public class ModelRender extends BaseRender {
     private float[] mvpMatrix = new float[16];
     private float[] rotateMatrix=new float[16];
     private ModelObj mModelObj;
-    private volatile float scale=0.08f;
+    private volatile float scale=0.08f;//缩放系数
     private float width;
     private float height;
     @Override
@@ -104,8 +104,8 @@ public class ModelRender extends BaseRender {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
         try {
-            Bitmap bitmap= BitmapFactory.decodeStream(context.getResources().getAssets().open("model/"+mModelObj.mModelMtl.getMap_Kd_Data()));
             KLog.w(TAG,mModelObj.mModelMtl.getMap_Kd_Data());
+            Bitmap bitmap= BitmapFactory.decodeStream(context.getResources().getAssets().open("model/"+(mModelObj.mModelMtl.getMap_Kd_Data()!=null?mModelObj.mModelMtl.getMap_Kd_Data():"")));
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D,0,bitmap,0);
             bitmap.recycle();
         } catch (IOException e) {
