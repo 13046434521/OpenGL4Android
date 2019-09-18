@@ -28,7 +28,9 @@ public class ModelGLSurface extends BaseGLSurface {
     }
     public ModelGLSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/UmbreonHighPoly");
+        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/pikachu");
+//        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/Corona");
+//        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/UmbreonHighPoly");
 //        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/nanosuit");
         mModelRenderList = new ArrayList<>();
         mModelRender1List = new ArrayList<>();

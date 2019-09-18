@@ -57,7 +57,7 @@ public class ModelRender extends BaseRender {
         this.width=width;
         this.height=height;
         Matrix.setIdentityM(mvpMatrix, 0);
-        Matrix.translateM(mvpMatrix,0,0,0f,-0.1f);
+        Matrix.translateM(mvpMatrix,0,0,-0.3f,-0.1f);
 //        Matrix.scaleM(mvpMatrix,0,0.4f,0.4f*width/height,0.4f);
 
         Matrix.scaleM(mvpMatrix,0,scale,scale*width/height,scale);
@@ -161,8 +161,7 @@ public class ModelRender extends BaseRender {
         this.scale = scale;
 
         Matrix.setIdentityM(mvpMatrix, 0);
-
-        Matrix.translateM(mvpMatrix,0,0,0f,-0.1f);
+        Matrix.translateM(mvpMatrix,0,0,-0.3f,-0.1f);
         Matrix.scaleM(mvpMatrix,0,scale,scale*width/height,scale);
     }
 }
