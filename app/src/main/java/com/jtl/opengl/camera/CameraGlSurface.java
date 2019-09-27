@@ -22,7 +22,7 @@ import static com.jtl.opengl.Constant.YUV_Y;
  * 描述:
  * 更改:
  */
-public class CameraGLSurface extends BaseGLSurface {
+public class CameraGlSurface extends BaseGLSurface {
     private byte[] mYData;
     private byte[] mUVData;
     private int width = Constant.WIDTH;
@@ -36,11 +36,11 @@ public class CameraGLSurface extends BaseGLSurface {
 
     private @Constant.CameraType
     String mCameraId = CAMERA_BACK;
-    public CameraGLSurface(Context context) {
+    public CameraGlSurface(Context context) {
         super(context);
     }
 
-    public CameraGLSurface(Context context, AttributeSet attrs) {
+    public CameraGlSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
         initData();
     }

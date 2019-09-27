@@ -18,7 +18,7 @@ import java.util.Arrays;
 /**
  * 作者:jtl
  * 日期:Created in 2019/9/16 13:32
- * 描述:
+ * 描述:光照的，目前尚未实现
  * 更改:
  */
 public class ModelRender1 extends BaseRender {

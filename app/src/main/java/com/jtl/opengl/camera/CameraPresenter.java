@@ -23,6 +23,7 @@ import static com.jtl.opengl.Constant.WIDTH;
  * 更改:
  */
 public class CameraPresenter<T> extends BasePresenter implements ICameraPresenter {
+    private static final String TAG = CameraPresenter.class.getSimpleName();
     private T t;
 
     public CameraPresenter(T t) {
@@ -38,17 +39,22 @@ public class CameraPresenter<T> extends BasePresenter implements ICameraPresente
     }
 
     public void takePhoto(byte[] data) {
+        byte[] rgbData=new byte[data.length* 3];
+        YuvToRgb.ConvertYUV2RGB(data,rgbData,WIDTH,HEIGHT);
+//        NativeHelper.yuvToRgb(data,rgbData,WIDTH,HEIGHT);
         Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.RGB_565);
-        ByteBuffer dataBuffer = ByteBuffer.allocateDirect(data.length * 2);
+        ByteBuffer dataBuffer = ByteBuffer.allocateDirect(rgbData.length);
         dataBuffer.order(ByteOrder.nativeOrder());
-        dataBuffer.put(data).position(0);
+        dataBuffer.put(rgbData).position(0);
 
         bitmap.copyPixelsFromBuffer(dataBuffer);
         Matrix matrix = new Matrix();
-        matrix.setRotate(CAMERA_TYPE == CAMERA_BACK ? -90 : 90);
+        matrix.setRotate(CAMERA_TYPE == CAMERA_BACK ? 90 : -90);
         Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         int result = FileHelper.getInstance().saveBitmap(newBitmap);
 
+        bitmap.recycle();
+        newBitmap.recycle();
         KLog.d(result == 1 ? "保存成功" : "保存失败");
         showToast(result == 1 ? "保存成功" : "保存失败");
     }

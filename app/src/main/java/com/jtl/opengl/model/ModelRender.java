@@ -57,7 +57,6 @@ public class ModelRender extends BaseRender {
         this.width=width;
         this.height=height;
         Matrix.setIdentityM(mvpMatrix, 0);
-        Matrix.translateM(mvpMatrix,0,0,-0.3f,-0.1f);
 //        Matrix.scaleM(mvpMatrix,0,0.4f,0.4f*width/height,0.4f);
 
         Matrix.scaleM(mvpMatrix,0,scale,scale*width/height,scale);
@@ -142,6 +141,11 @@ public class ModelRender extends BaseRender {
 
         //public static void glVertexAttribPointer(插槽位置,有几个分量（x,y,z,w）,数据类型,是否归一化,0,数据)
         //告诉GPU如何遍历VBO的内存块
+        if(mModelObj==null){
+            int aaa=0;
+        }else{
+            int bbb=0;
+        }
         GLES20.glVertexAttribPointer(a_Position, 3, GLES20.GL_FLOAT, false, 0, mModelObj.getVertexBuffer());
         GLES20.glVertexAttribPointer(a_TexCoord, 2, GLES20.GL_FLOAT, false, 0, mModelObj.getTextureBuffer());
 
@@ -161,7 +165,6 @@ public class ModelRender extends BaseRender {
         this.scale = scale;
 
         Matrix.setIdentityM(mvpMatrix, 0);
-        Matrix.translateM(mvpMatrix,0,0,-0.3f,-0.1f);
         Matrix.scaleM(mvpMatrix,0,scale,scale*width/height,scale);
     }
 }

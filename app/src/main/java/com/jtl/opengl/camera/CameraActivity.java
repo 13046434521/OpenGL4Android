@@ -22,7 +22,7 @@ import static com.jtl.opengl.Constant.WIDTH;
 
 public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemClickListener, CameraWrapper.CameraDataListener {
     private static final String TAG = CameraActivity.class.getSimpleName();
-    private CameraGLSurface mCameraGLSurface;
+    private CameraGlSurface mCameraGlSurface;
     private ImageView mCameraSwitchImg;
     private ImageView mCameraImg;
 
@@ -44,7 +44,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
     }
 
     private void initView() {
-        mCameraGLSurface = findViewById(R.id.gl_camera_surface);
+        mCameraGlSurface = findViewById(R.id.gl_camera_surface);
         mCameraImg = findViewById(R.id.iv_camera_btn);
         mCameraSwitchImg = findViewById(R.id.iv_camera_switch);
 
@@ -87,17 +87,17 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
         if (mCameraWrapper != null) {
             mCameraWrapper.openCamera(Constant.CAMERA_BACK);
         }
-        if (mCameraGLSurface != null) {
-            mCameraGLSurface.onResume();
-            mCameraGLSurface.setAspectRatio(height,width);
+        if (mCameraGlSurface != null) {
+            mCameraGlSurface.onResume();
+            mCameraGlSurface.setAspectRatio(height,width);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mCameraGLSurface != null) {
-            mCameraGLSurface.onPause();
+        if (mCameraGlSurface != null) {
+            mCameraGlSurface.onPause();
         }
         if (mCameraWrapper != null) {
             mCameraWrapper.closeCamera();
@@ -117,7 +117,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if (mCameraGLSurface != null) {
+        if (mCameraGlSurface != null) {
             int type = Constant.YUV420P_NV12;
             switch (item.getTitle().toString()) {
                 case "YUV_Y":
@@ -127,7 +127,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
                     type = Constant.YUV420P_NV12;
                     break;
             }
-            mCameraGLSurface.setCameraDataType(type);
+            mCameraGlSurface.setCameraDataType(type);
         }
 
         return true;
@@ -135,10 +135,10 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
 
     @Override
     public void setCameraDataListener(@Constant.CameraType final String cameraID, final byte[] imageData, float timestamp, int imageFormat) {
-        mCameraGLSurface.queueEvent(new Runnable() {
+        mCameraGlSurface.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mCameraGLSurface.setCameraData(cameraID, imageData);
+                mCameraGlSurface.setCameraData(cameraID, imageData);
             }
         });
     }
@@ -151,7 +151,7 @@ public class CameraActivity extends BaseActivity implements Toolbar.OnMenuItemCl
                 break;
             case R.id.iv_camera_switch:
                 mCameraPresenter.switchCamera(mCameraWrapper);
-                mCameraGLSurface.setAspectRatio(height,width);
+                mCameraGlSurface.setAspectRatio(height,width);
                 break;
             default:
                 Toast.makeText(this, "其他", Toast.LENGTH_SHORT).show();

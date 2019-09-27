@@ -48,8 +48,15 @@ public class Constant {
     public @interface CameraType {
     }
 
-//    public static final int WIDTH=1920;
-//    public static final int HEIGHT=1080;
+    public static final String MODEL_3D = "3D_20190117_1416";
+    public static final String MODEL_PIKACHU = "pikachu";
+    public static final String MODEL_CORONA = "Corona";
+    public static final String MODEL_Umbreon_High_Poly = "UmbreonHighPoly";
+    public static final String MODEL_NANOSUIT = "nanosuit";
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+    @StringDef({MODEL_3D, MODEL_PIKACHU,MODEL_CORONA,MODEL_Umbreon_High_Poly,MODEL_NANOSUIT})
+    public @interface ModelName {}
 
     public static final int WIDTH = 1920;
     public static final int HEIGHT = 1080;

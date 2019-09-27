@@ -3,6 +3,7 @@ package com.jtl.opengl.model;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.jtl.opengl.Constant;
 import com.jtl.opengl.base.BaseGLSurface;
 import com.socks.library.KLog;
 
@@ -19,68 +20,87 @@ import javax.microedition.khronos.opengles.GL10;
  * 更改:
  */
 public class ModelGLSurface extends BaseGLSurface {
-    private static final String TAG=ModelGLSurface.class.getSimpleName();
+    private static final String TAG = ModelGLSurface.class.getSimpleName();
     private List<ModelObj> mModelObjList;
     private List<ModelRender> mModelRenderList;
+    /*
+     * 光照的，目前没实现
+     */
     private List<ModelRender1> mModelRender1List;
+
     public ModelGLSurface(Context context) {
         super(context);
     }
+
     public ModelGLSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
-//                mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/3D_20190117_1416");
-        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/pikachu");
-//        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/Corona");
-//        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/UmbreonHighPoly");
-//        mModelObjList =  ModelHelper.getInstance().initModelObj(getContext(),"model/nanosuit");
-        mModelRenderList = new ArrayList<>();
-        mModelRender1List = new ArrayList<>();
+        initData(Constant.MODEL_NANOSUIT);
+    }
 
-        for (int i=0;i<mModelObjList.size();i++){
-            ModelRender modelRender=new ModelRender();
-            mModelRenderList.add(modelRender);
+    public void initData(String modelName) {
+        synchronized (ModelGLSurface.class) {
+            mModelObjList = ModelHelper.getInstance().initModelObj(getContext(), "model/" + modelName);
 
-            ModelRender1 modelRender1=new ModelRender1();
-            mModelRender1List.add(modelRender1);
+            if (mModelRenderList != null) {
+                mModelRenderList.clear();
+            } else {
+                mModelRenderList = new ArrayList<>();
+            }
+
+            if (mModelRender1List != null) {
+                mModelRender1List.clear();
+            } else {
+                mModelRender1List = new ArrayList<>();
+            }
+
+
+            for (int i = 0; i < mModelObjList.size(); i++) {
+                ModelRender modelRender = new ModelRender();
+                mModelRenderList.add(modelRender);
+
+//            ModelRender1 modelRender1=new ModelRender1();
+//            mModelRender1List.add(modelRender1);
+            }
         }
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         super.onSurfaceCreated(gl, config);
-
-        for (int i=0;i<mModelObjList.size();i++){
-            ModelRender render=mModelRenderList.get(i);
+        for (int i = 0; i < mModelObjList.size(); i++) {
+            ModelRender render = mModelRenderList.get(i);
             render.createdGLThread(getContext().getApplicationContext());
-            render.initModelObj(mModelObjList.get(i),getContext().getApplicationContext());
+            render.initModelObj(mModelObjList.get(i), getContext().getApplicationContext());
         }
 
-        for (int i=0;i<mModelRender1List.size();i++){
-            ModelRender1 render=mModelRender1List.get(i);
-            render.createdGLThread(getContext().getApplicationContext());
-            render.initModelObj(mModelObjList.get(i),getContext().getApplicationContext());
-        }
+//        for (int i=0;i<mModelRender1List.size();i++){
+//            ModelRender1 render=mModelRender1List.get(i);
+//            render.createdGLThread(getContext().getApplicationContext());
+//            render.initModelObj(mModelObjList.get(i),getContext().getApplicationContext());
+//        }
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         super.onSurfaceChanged(gl, width, height);
 
-        for (ModelRender modelRender:mModelRenderList){
-            modelRender.onSurfaceChanged(width,height);
+        for (ModelRender modelRender : mModelRenderList) {
+            modelRender.onSurfaceChanged(width, height);
         }
 
-        for (ModelRender1 modelRender1:mModelRender1List){
-            modelRender1.onSurfaceChanged(width,height);
-        }
+//        for (ModelRender1 modelRender1:mModelRender1List){
+//            modelRender1.onSurfaceChanged(width,height);
+//        }
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
         super.onDrawFrame(gl);
 
-        for (ModelRender modelRender:mModelRenderList){
-            modelRender.onDraw();
+        synchronized (ModelGLSurface.class){
+            for (ModelRender modelRender : mModelRenderList) {
+                modelRender.onDraw();
+            }
         }
 
 //        for (ModelRender1 modelRender1:mModelRender1List){
@@ -88,17 +108,17 @@ public class ModelGLSurface extends BaseGLSurface {
 //        }
     }
 
-    public void setModelScale(float scale){
-        for (int i=0;i<mModelRender1List.size();i++){
-            ModelRender render=mModelRenderList.get(i);
+    public void setModelScale(float scale) {
+        for (int i = 0; i < mModelRenderList.size(); i++) {
+            ModelRender render = mModelRenderList.get(i);
             render.setScale(scale);
         }
 
-        for (int i=0;i<mModelObjList.size();i++){
-            ModelRender1 render=mModelRender1List.get(i);
-            render.setScale(scale);
-        }
+//        for (int i=0;i<mModelRender1List.size();i++){
+//            ModelRender1 render=mModelRender1List.get(i);
+//            render.setScale(scale);
+//        }
 
-        KLog.e(TAG,scale);
+        KLog.e(TAG, scale);
     }
 }

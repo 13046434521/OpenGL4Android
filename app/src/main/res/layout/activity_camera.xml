@@ -7,7 +7,7 @@
     android:focusable="true"
     tools:context=".camera.CameraActivity">
 
-    <com.jtl.opengl.camera.CameraGLSurface
+    <com.jtl.opengl.camera.CameraGlSurface
         android:id="@+id/gl_camera_surface"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
